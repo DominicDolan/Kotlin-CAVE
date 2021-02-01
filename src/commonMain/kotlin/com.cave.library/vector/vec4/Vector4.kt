@@ -40,9 +40,9 @@ interface Vector4 : Vector3 {
             override val x: Double = x
             override val y: Double = y
             override val z: Double = z
-            override val w: Double = z
+            override val w: Double = w
 
-            override fun toString() = "($x, $y, $z, $w)"
+            override fun toString() = toString(this)
 
         }
 
@@ -53,6 +53,11 @@ interface Vector4 : Vector3 {
         fun from(xyz: Vector3, w: Double = 0.0) = create(xyz.x, xyz.y, xyz.z, w)
 
         fun from(xy: InlineVector, z: Double = 0.0, w: Double = 0.0) = create(xy.x, xy.y, z, w)
+
+        fun toString(vector4: Vector4): String {
+            val (x, y, z, w) = vector4
+            return "($x, $y, $z, $w)"
+        }
     }
 }
 
