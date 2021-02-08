@@ -7,36 +7,36 @@ import kotlinx.dom.appendText
 import org.w3c.dom.Element
 
 fun main() {
-    val vec1 = vec(1.0, 2.0)
-    val vec2 = vec(2.0, 1.0)
-    println((vec1 + vec2))
 
-    println("hello, cave")
-
-    BaseComponent {
-        appendElement("p") { appendText("vec1: $vec1, vec2: $vec2") }
-        appendElement("p") { appendText("vec1 + vec2: ${vec1 + vec2}") }
-
-    }
+    BaseComponent("app")
 
 }
-
-class BaseComponent(element: Element.() -> Unit) {
-    private var hasLoaded = false
+abstract class KDOM(rootId: String) {
 
     init {
+        document.addEventListener("DOMContentLoaded", {
+            val root = document.getElementById(rootId)
+            root?.appendElement("div") {
+                render()
 
-        var intervalId = 0
-        val setup = {
-            val el = document.getElementById("app")
-            if (el != null) {
-                el.appendElement("div", element)
-
-                hasLoaded = true
-                window.clearInterval(intervalId)
             }
-        }
 
-        intervalId = window.setInterval(setup, 50)
+        })
     }
+
+    abstract fun Element.render()
+}
+
+class BaseComponent(rootId: String) : KDOM(rootId) {
+    override fun Element.render() {
+        val vec1 = vec(1.0, 2.0)
+        val vec2 = vec(2.0, 1.0)
+        println((vec1 + vec2))
+
+        println("hello, cave")
+
+        appendElement("p") { appendText("vec1: $vec1, vec2: $vec2") }
+        appendElement("p") { appendText("vec1 + vec2: ${vec1 + vec2}") }
+    }
+
 }

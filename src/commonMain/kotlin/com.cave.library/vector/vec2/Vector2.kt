@@ -41,6 +41,22 @@ interface VariableVector2 : Vector2 {
     override var x: Double
     override var y: Double
 
+    fun set(x: Double, y: Double) {
+        this.x = x
+        this.y = y
+    }
+
+    fun set(vector: Vector2) = set(vector.x, vector.y)
+    fun set(vector: InlineVector) = set(vector.x, vector.y)
+
+    operator fun set(component: Int, value: Double) {
+        when(component) {
+            0 -> x
+            1 -> y
+            else -> throw Exception("OutOfBoundsException: Tried to set 3rd coordinate on a 2D vector")
+        }
+    }
+
     companion object {
         fun create(x: Double, y: Double) = object : VariableVector2 {
             override var x: Double = x

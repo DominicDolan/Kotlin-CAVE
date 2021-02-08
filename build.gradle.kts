@@ -25,6 +25,17 @@ kotlin {
     }
 
     sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation("org.joml:joml:+")
+            }
+
+        }
+        val commonMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+            }
+        }
         all {
             languageSettings.enableLanguageFeature("InlineClasses")
         }

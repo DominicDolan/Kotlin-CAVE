@@ -62,7 +62,26 @@ interface Vector4 : Vector3 {
 }
 
 interface VariableVector4 : Vector4, VariableVector3 {
-    override var z: Double
+    override var w: Double
+
+    fun set(x: Double, y: Double, z: Double, w: Double) {
+        this.x = x
+        this.y = y
+        this.z = z
+        this.w = w
+    }
+
+    fun set(vector: Vector4) = set(vector.x, vector.y, vector.z, vector.w)
+
+    override fun set(component: Int, value: Double) {
+        when(component) {
+            0 -> x
+            1 -> y
+            2 -> z
+            3 -> w
+            else -> throw Exception("OutOfBoundsException: Tried to set 5th coordinate on a 4D vector")
+        }
+    }
 
     companion object {
         fun create(x: Double, y: Double, z: Double, w: Double) = object : VariableVector4 {
