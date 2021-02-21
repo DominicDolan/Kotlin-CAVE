@@ -1,6 +1,9 @@
 package com.cave.library.vector.vec3
 
 import com.cave.library.angle.Radian
+import com.cave.library.tools.CachedDouble
+import com.cave.library.tools.CachedRadian
+import com.cave.library.tools.hypot
 import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.VariableVector2
 import com.cave.library.vector.vec2.Vector2
@@ -9,10 +12,13 @@ import kotlin.math.hypot
 import kotlin.math.sqrt
 
 interface Vector3 : Vector2 {
+    override val dimension: Int
+        get() = 3
+
     val z: Double
 
     override val r: Double
-        get() = sqrt(x*x + y*y + z*z)
+        get() = hypot(x, y, z)
     override val theta: Radian
         get() = super.theta
 
@@ -36,6 +42,15 @@ interface Vector3 : Vector2 {
 
     companion object {
         fun create(x: Double, y: Double, z: Double) = object : Vector3 {
+
+            private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }
+            override val r: Double
+                get() = rCache.get()
+
+            private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super.theta }
+            override val theta: Radian
+                get() = thetaCache.get()
+
             override val x: Double = x
             override val y: Double = y
             override val z: Double = z

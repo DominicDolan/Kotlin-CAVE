@@ -1,7 +1,10 @@
 package com.cave.library.matrix.mat3
 
+import com.cave.library.angle.Radian
 import com.cave.library.matrix.ArrayToMatrix
 import com.cave.library.matrix.formatted
+import com.cave.library.tools.CachedDouble
+import com.cave.library.tools.CachedRadian
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.Vector4
@@ -13,6 +16,14 @@ open class GenericMatrixVector3(
     protected val yIndex: Int,
     protected val zIndex: Int
 ) : Vector3 {
+
+    private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }
+    override val r: Double
+        get() = rCache.get()
+
+    private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super.theta }
+    override val theta: Radian
+        get() = thetaCache.get()
 
     override val x: Double
         get() = array[xIndex]

@@ -1,8 +1,10 @@
 package com.cave.library.matrix
 
+import com.cave.library.angle.AxisOfRotation
 import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
 import com.cave.library.matrix.mat3.StaticMatrix3
+import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec3.dot
 import kotlin.math.cos
 import kotlin.math.sin
@@ -62,25 +64,28 @@ interface ArrayToMatrix {
         this.rotate(angle.toRadians().toDouble(), x, y, z)
     }
 
+    fun DoubleArray.rotate(angle: Degree, vector: Vector3) {
+        this.rotate(angle.toRadians().toDouble(), vector.x, vector.y, vector.z)
+    }
+
+    fun DoubleArray.rotate(rotation: AxisOfRotation) {
+        this.rotate(rotation.rotation, rotation.x, rotation.y, rotation.z)
+    }
+
     private fun DoubleArray.rotate(radians: Double, x: Double, y: Double, z: Double) {
         val sin = sin(radians)
         val cos = cos(radians)
-        println("sin: $sin, cos: $cos")
+
         val c = 1.0 - cos
 
         val xy = x * y * c
         val xz = x * z * c
         val yz = y * z * c
 
-        this[0, 0] = (cos + x * x * c)
-        this[1, 0] = (xy - z * sin)
-        this[2, 0] = (xz + y * sin)
-        this[0, 1] = (xy + z * sin)
-        this[1, 1] = (cos + y * y * c)
-        this[2, 1] = (yz - x * sin)
-        this[0, 2] = (xz - y * sin)
-        this[1, 2] = (yz + x * sin)
-        this[2, 2] = (cos + z * z * c)
+        this[0, 0] = (cos + x * x * c); this[1, 0] = (xy - z * sin);    this[2, 0] = (xz + y * sin)
+        this[0, 1] = (xy + z * sin);    this[1, 1] = (cos + y * y * c); this[2, 1] = (yz - x * sin)
+        this[0, 2] = (xz - y * sin);    this[1, 2] = (yz + x * sin);    this[2, 2] = (cos + z * z * c)
+
     }
 
     fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix3, matRight: StaticMatrix3) {
@@ -95,7 +100,7 @@ interface ArrayToMatrix {
 }
 
 
-fun Double.formatted(characterLength: Int = 5): String {
+fun Double.formatted(characterLength: Int = 6): String {
     val str = this.toString()
     return when {
         str.length < characterLength -> {

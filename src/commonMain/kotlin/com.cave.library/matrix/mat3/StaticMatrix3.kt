@@ -1,14 +1,10 @@
 package com.cave.library.matrix.mat3
 
-import com.cave.library.angle.Angle
-import com.cave.library.angle.Radian
-import com.cave.library.angle.AxisOfRotation
-import com.cave.library.angle.radians
+import com.cave.library.angle.*
+import com.cave.library.angle.AbstractAxisOfRotation
 import com.cave.library.matrix.*
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
-import kotlin.math.acos
-import kotlin.math.sqrt
 
 interface StaticMatrix3 {
     operator fun get(column: Int, row: Int): Double
@@ -107,9 +103,12 @@ interface StaticMatrix3 {
 
         fun rotated(rotation: Angle, x: Double, y: Double, z: Double): StaticMatrix3 {
             val array = DoubleArray(arraySize)
+            val rotationAxis = AxisOfRotation.create(rotation, x, y, z)
+
             array.identity()
-            array.rotate(rotation.toRadians(), x, y, z)
-            return StaticMatrix3Impl(array)
+            array.rotate(rotationAxis)
+
+            return StaticMatrix3Impl(array, defaultRotation = rotationAxis)
         }
 
         fun multiplied(matrixLeft: StaticMatrix3, matrixRight: StaticMatrix3): StaticMatrix3 {
@@ -120,8 +119,12 @@ interface StaticMatrix3 {
     }
 }
 
-internal class StaticMatrix3Impl(private val array: DoubleArray, arr2Mat: ArrayToMatrix = StaticMatrix3)
-    : StaticMatrix3, ArrayToMatrix by arr2Mat{
+internal class StaticMatrix3Impl(
+    private val array: DoubleArray,
+    arr2Mat: ArrayToMatrix = StaticMatrix3,
+    defaultRotation: AxisOfRotation? = null
+) : StaticMatrix3, ArrayToMatrix by arr2Mat{
+
     override fun get(column: Int, row: Int) = array[column, row]
 
     override val scale: Vector3 by lazy {
@@ -131,7 +134,10 @@ internal class StaticMatrix3Impl(private val array: DoubleArray, arr2Mat: ArrayT
         GenericMatrixVector3(array, xIndex, yIndex, zIndex)
     }
 
-    override val rotation: AxisOfRotation = AxisOfRotationImpl(this)
+    override val rotation: AxisOfRotation by lazy {
+        if (defaultRotation == null) StaticAxisOfRotationImpl(this, 0.radians, 0.0, 0.0, 1.0)
+        else StaticAxisOfRotationImpl(this, defaultRotation)
+    }
 
     override val column = StaticMatrix3.Column.create(array, this)
     override val row = StaticMatrix3.Row.create(array, this)
@@ -147,24 +153,37 @@ internal class StaticMatrix3Impl(private val array: DoubleArray, arr2Mat: ArrayT
     }
 }
 
-internal class AxisOfRotationImpl(private val matrix: StaticMatrix3) : AxisOfRotation {
-    private val s: Double
-        get() = sqrt(((m(1,2) - m(2,1)) * (m(1,2) - m(2,1)) + (m(2,0) - m(0,2)) * (m(2,0) - m(0,2)) + (m(0,1) - m(1,0)) * (m(0,1) - m(1,0)))).also { println("s: $it") }
+internal class StaticAxisOfRotationImpl(
+    override val matrix: StaticMatrix3,
+    defaultRotation: Radian,
+    defaultX: Double, defaultY: Double, defaultZ: Double,
+    ) : AbstractAxisOfRotation(), AxisOfRotation {
 
-    override val angle: Radian
-        get() = acos((m(0,0) + m(1, 1) + m(2, 2) - 1) / 2).radians
+    override val rotation: Radian
     override val x: Double
-        get() = ((m(1,2) - m(2,1)) / s)
     override val y: Double
-        get() = ((m(2,0) - m(0,2)) / s)
     override val z: Double
-        get() = ((m(0,1) - m(1,0)) / s)
+
+    constructor(matrix: StaticMatrix3, other: AxisOfRotation): this(matrix, other.rotation, other.x, other.y, other.z)
+
+    init {
+        val rotation = super.rotation
+        this.rotation = (if (rotation.toDouble().isValid()) rotation else defaultRotation)
+
+        val x = super.x
+        this.x = (if (x.isValid()) x else defaultX)
+
+        val y = super.y
+        this.y = (if (y.isValid()) y else defaultY)
+
+        println("calculating z")
+        val z = super.z
+        this.z = (if (z.isValid()) z else defaultZ)
+    }
 
     override fun toString() = Vector3.toString(this)
 
-    private fun m(c: Int, r: Int): Double {
-        return matrix.row[r].normalized[c]
-    }
+    private fun Double.isValid() = !isNaN() && !isInfinite()
 }
 
 

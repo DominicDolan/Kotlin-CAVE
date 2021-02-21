@@ -11,7 +11,7 @@ fun main() {
     val m = StaticMatrix3.rotated(30.degrees, 0.0, 0.0, 1.0)
 
     println(m)
-    println(m.rotation.angle.toDegrees().toDouble())
+    println(m.rotation.rotation.toDegrees().toDouble())
 
 
 }

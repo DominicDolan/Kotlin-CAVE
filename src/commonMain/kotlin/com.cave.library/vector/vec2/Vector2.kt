@@ -1,10 +1,16 @@
 package com.cave.library.vector.vec2
 
+import com.cave.library.angle.Radian
 import com.cave.library.angle.radians
+import com.cave.library.tools.CachedDouble
+import com.cave.library.tools.CachedRadian
 import kotlin.math.atan2
 import kotlin.math.hypot
 
 interface Vector2 {
+    val dimension: Int
+        get() = 2
+
     val x: Double
     val y: Double
 
@@ -24,16 +30,18 @@ interface Vector2 {
 
     companion object {
         fun create(x: Double, y: Double) = object : Vector2 {
+            override val r: Double = super.r
+
             override val x: Double = x
             override val y: Double = y
 
-            override fun toString(): String {
-                return "($x, $y)"
-            }
+            override fun toString() = toString(this)
         }
 
         fun create(other: Vector2) = create(other.x, other.y)
         fun create(other: InlineVector) = create(other.x, other.y)
+
+        fun toString(vector: Vector2) = "(${vector.x}, ${vector.y})"
     }
 }
 
@@ -59,12 +67,19 @@ interface VariableVector2 : Vector2 {
 
     companion object {
         fun create(x: Double, y: Double) = object : VariableVector2 {
+
+            private val rCache = CachedDouble.create(arrayOf({ x }, { y })) { super.r }
+            override val r: Double
+                get() = rCache.get()
+
+            private val thetaCache = CachedRadian.create(arrayOf({ x }, { y })) { super.theta }
+            override val theta: Radian
+                get() = thetaCache.get()
+
             override var x: Double = x
             override var y: Double = y
 
-            override fun toString(): String {
-                return "($x, $y)"
-            }
+            override fun toString() = Vector2.toString(this)
         }
 
         fun create(other: Vector2) = create(other.x, other.y)

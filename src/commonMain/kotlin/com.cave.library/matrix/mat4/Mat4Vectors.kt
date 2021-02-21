@@ -1,8 +1,11 @@
 package com.cave.library.matrix.mat4
 
+import com.cave.library.angle.Radian
 import com.cave.library.matrix.ArrayToMatrix
 import com.cave.library.matrix.formatted
 import com.cave.library.matrix.mat3.GenericMatrixVector3
+import com.cave.library.tools.CachedDouble
+import com.cave.library.tools.CachedRadian
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
@@ -16,11 +19,16 @@ open class GenericMatrixVector4(
     private val wIndex: Int
 ) : GenericMatrixVector3(array, xIndex, yIndex, zIndex), Vector4 {
 
+    private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super<Vector4>.r }
+    override val r: Double
+        get() = rCache.get()
+
+    private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super<Vector4>.theta }
+    override val theta: Radian
+        get() = thetaCache.get()
+
     override val w: Double
         get() = array[wIndex]
-
-    override val r: Double
-        get() = sqrt(x*x + y*y + z*z)
 
     override fun toString(): String {
         return "${x.formatted()}  ${y.formatted()}  ${z.formatted()}  ${w.formatted()}"

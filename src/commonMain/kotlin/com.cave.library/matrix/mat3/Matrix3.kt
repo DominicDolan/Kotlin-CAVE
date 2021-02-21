@@ -1,11 +1,11 @@
 package com.cave.library.matrix.mat3
 
+import com.cave.library.angle.AbstractAxisOfRotation
 import com.cave.library.angle.Radian
-import com.cave.library.angle.AxisOfRotation
 import com.cave.library.angle.VariableAxisOfRotation
 import com.cave.library.matrix.ArrayToMatrix
-import com.cave.library.vector.vec2.InlineVector
-import com.cave.library.vector.vec2.Vector2
+import com.cave.library.tools.CachedDouble
+import com.cave.library.tools.CachedRadian
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.Vector4
@@ -141,44 +141,56 @@ internal class Matrix3Impl(private val array: DoubleArray, arrToMat: ArrayToMatr
 
 
 private class AxisOfRotationVariableImpl(
-    matrix: Matrix3,
+    override val matrix: Matrix3,
     private val array: DoubleArray,
-    arr2Mat: ArrayToMatrix,
-) : VariableAxisOfRotation, ArrayToMatrix by arr2Mat {
+    private val arr2Mat: ArrayToMatrix,
+) : AbstractAxisOfRotation(), VariableAxisOfRotation, ArrayToMatrix by arr2Mat {
 
-    private val static = AxisOfRotationImpl(matrix)
-
-    override var angle: Radian
-        get() = static.angle
+    private val angleCache = CachedRadian.create(arrayOf({ m(0, 0) }, { m(1, 1) }, { m(2, 2) })) {
+        super.rotation
+    }
+    override var rotation: Radian
+        get() = angleCache.get()
         set(value) {
             array.rotate(value, x, y, z)
         }
+
+
+    private val xCache = CachedDouble.create(arrayOf({ m(1, 2) }, { m(2, 1) })) { super.x }
     override var x: Double
-        get() = static.x
+        get() = xCache.get()
         set(value) {
-            array.rotate(angle, value, y, z)
+            array.rotate(rotation, value, y, z)
         }
+
+    private val yCache = CachedDouble.create(arrayOf({ m(2, 0) }, { m(0, 2) })) { super.y }
     override var y: Double
-        get() = static.y
+        get() = yCache.get()
         set(value) {
-            array.rotate(angle, x, value, z)
+            array.rotate(rotation, x, value, z)
         }
+
+    private val zCache = CachedDouble.create(arrayOf({ m(0, 1) }, { m(1, 0) })) { super.y }
     override var z: Double
-        get() = static.z
+        get() = zCache.get()
         set(value) {
-            array.rotate(angle, x, y, value)
+            array.rotate(rotation, x, y, value)
         }
 
     override fun set(x: Double, y: Double, z: Double) {
-        array.rotate(angle, x, y, z)
+        array.rotate(rotation, x, y, z)
     }
 
     override fun set(x: Double, y: Double) {
-        array.rotate(angle, x, y, z)
+        array.rotate(rotation, x, y, z)
     }
 
     override fun set(angle: Radian, x: Double, y: Double, z: Double) {
         array.rotate(angle, x, y, z)
+    }
+
+    private fun m(c: Int, r: Int): Double {
+        return matrix.row[r].normalized[c]
     }
 
     override fun toString() = Vector3.toString(this)

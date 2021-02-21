@@ -1,17 +1,24 @@
 package com.cave.library.vector.vec4
 
 import com.cave.library.angle.Radian
+import com.cave.library.tools.CachedDouble
+import com.cave.library.tools.CachedRadian
+import com.cave.library.tools.hypot
 import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import kotlin.math.hypot
+import kotlin.math.sqrt
 
 interface Vector4 : Vector3 {
+    override val dimension: Int
+        get() = 4
+
     val w: Double
 
     override val r: Double
-        get() = hypot(super.r, w)
+        get() = hypot(x, y, z, w)
     override val theta: Radian
         get() = super.theta
 
@@ -21,7 +28,7 @@ interface Vector4 : Vector3 {
             1 -> y
             2 -> z
             3 -> w
-            else -> throw Exception("OutOfBoundsException: Tried to call 5th coordinate on a 4D vector")
+            else -> throw Exception("OutOfBoundsException: Tried to call coordinate $i on a ${dimension}D vector")
         }
     }
 
@@ -85,6 +92,15 @@ interface VariableVector4 : Vector4, VariableVector3 {
 
     companion object {
         fun create(x: Double, y: Double, z: Double, w: Double) = object : VariableVector4 {
+
+            private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }
+            override val r: Double
+                get() = rCache.get()
+
+            private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super.theta }
+            override val theta: Radian
+                get() = thetaCache.get()
+
             override var x: Double = x
             override var y: Double = y
             override var z: Double = z
