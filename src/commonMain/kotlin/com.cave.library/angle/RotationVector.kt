@@ -1,17 +1,26 @@
 package com.cave.library.angle
 
-import com.cave.library.matrix.mat3.StaticMatrix3
+import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.mat3.MatrixVector3
 import com.cave.library.tools.hypot
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import kotlin.math.acos
-import kotlin.math.sqrt
 
-interface AxisOfRotation : Vector3 {
-    val rotation: Radian
+interface Rotation : Angle {
+    val angle: Radian
+    val axis: Vector3
+
+    override fun toDouble() = angle.toDouble()
+
+    override fun toFloat() = angle.toFloat()
+
+    override fun toDegrees() = angle.toDegrees()
+
+    override fun toRadians() = angle
 
     companion object {
-        fun create(rotation: Angle, x: Double, y: Double, z: Double): AxisOfRotation {
+        fun create(rotation: Angle, x: Double, y: Double, z: Double): Rotation {
             val r = hypot(x, y, z)
             val isUnit =  (r > 0.99 && r < 1.01)
 
@@ -19,62 +28,53 @@ interface AxisOfRotation : Vector3 {
             val adjustedY = if (isUnit) y else y/r
             val adjustedZ = if (isUnit) z else z/r
 
-            return object : AxisOfRotation {
-                override val rotation: Radian = rotation.toRadians()
-                override val x: Double = adjustedX; override val y: Double = adjustedY; override val z: Double = adjustedZ
+            return object : Rotation {
+                override val angle: Radian = rotation.toRadians()
+                override val axis: Vector3 = Vector3.create(adjustedX, adjustedY, adjustedZ)
 
-                override fun toString(): String = Vector3.toString(this) + ", rotation: ${this.rotation}"
+                override fun toString(): String = Companion.toString(this)
             }
         }
+
+        fun aboutZ(rotation: Angle) = create(rotation, 0.0, 0.0, 1.0)
+
+        fun toString(rotation: Rotation): String {
+            return "angle: ${rotation.angle}, axis: ${Vector3.toString(rotation.axis)}"
+        }
     }
 }
 
 
-internal abstract class AbstractAxisOfRotation : AxisOfRotation {
-    protected abstract val matrix: StaticMatrix3
+internal abstract class AbstractRotation(private val array: DoubleArray, private val context: MatrixContext) : Rotation, MatrixContext by context {
 
-    private val s: Double
+    override val angle: Radian
+        get() = acos((array[0, 0] + array[1, 1] + array[2, 2] - 1) / 2).radians
+
+    val nonNormalAxis = Axis()
+    override val axis: Vector3
         get() {
-            val m1221 = (m(1,2) - m(2,1))
-            val m2002 = (m(2,0) - m(0,2))
-            val m0110 = (m(0,1) - m(1,0))
-
-            val sSquared = m1221*m1221 + m2002*m2002 + m0110*m0110
-
-            return if (sSquared == 0.0) 0.0
-            else sqrt(sSquared)
+            return nonNormalAxis.normalized
         }
 
-    override val rotation: Radian
-        get() = acos((m(0,0) + m(1, 1) + m(2, 2) - 1) / 2).radians
-    override val x: Double
-        get() = (m(1,2) - m(2,1)) / s
-    override val y: Double
-        get() = (m(2,0) - m(0,2)) / s
-    override val z: Double
-        get() = (m(0,1) - m(1,0))/ s
+    override fun toString() = Rotation.toString(this) + " r: ${nonNormalAxis.r}"
 
-    private fun m(c: Int, r: Int): Double {
-        return matrix.row[r].normalized[c]
-    }
-
-    override fun toString() = "rotation: $rotation, axis: ${Vector3.toString(this)}"
+    inner class Axis : MatrixVector3(array,
+        xGetter = { it[1, 2] - it[2, 1] },
+        yGetter = { it[2, 0] - it[0, 2] },
+        zGetter = { it[0, 1] - it[1, 0] },
+        context
+    )
 
 }
 
-interface RotationAxisDeg : Vector3 {
-    val angle: Degree
-}
 
-interface VariableAxisOfRotation : VariableVector3, AxisOfRotation {
-    override var rotation: Radian
+interface VariableRotation : Rotation {
+    override var angle: Radian
+
+    override val axis: VariableVector3
 
     fun set(angle: Radian, x: Double, y: Double, z: Double)
     fun set(angle: Degree, x: Double, y: Double, z: Double) = set(angle.toRadians(), x, y, z)
-}
-
-interface VariableRotationAxisDeg : VariableVector3, RotationAxisDeg {
-    override var angle: Degree
 }
 
 interface RotationVector {

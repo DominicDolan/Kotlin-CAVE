@@ -1,8 +1,8 @@
 package com.cave.library.matrix
 
-import com.cave.library.angle.AxisOfRotation
 import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
+import com.cave.library.angle.Rotation
 import com.cave.library.matrix.mat3.StaticMatrix3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec3.dot
@@ -10,7 +10,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-interface ArrayToMatrix {
+interface MatrixContext {
     val size: Int
 
     val arraySize: Int
@@ -68,8 +68,8 @@ interface ArrayToMatrix {
         this.rotate(angle.toRadians().toDouble(), vector.x, vector.y, vector.z)
     }
 
-    fun DoubleArray.rotate(rotation: AxisOfRotation) {
-        this.rotate(rotation.rotation, rotation.x, rotation.y, rotation.z)
+    fun DoubleArray.rotate(rotation: Rotation) {
+        this.rotate(rotation.angle, rotation.axis.x, rotation.axis.y, rotation.axis.z)
     }
 
     private fun DoubleArray.rotate(radians: Double, x: Double, y: Double, z: Double) {
@@ -89,7 +89,7 @@ interface ArrayToMatrix {
     }
 
     fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix3, matRight: StaticMatrix3) {
-        val matrixSize = this@ArrayToMatrix.size
+        val matrixSize = this@MatrixContext.size
         for (row in 0 until matrixSize) {
             for (column in 0 until matrixSize) {
                 this[column, row] = matLeft.row[row].dot(matRight.column[column])

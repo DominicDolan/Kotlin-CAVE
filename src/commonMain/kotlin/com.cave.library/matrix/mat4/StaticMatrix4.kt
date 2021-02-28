@@ -1,8 +1,8 @@
 package com.cave.library.matrix.mat4
 
-import com.cave.library.angle.AxisOfRotation
+import com.cave.library.angle.Rotation
 import com.cave.library.matrix.*
-import com.cave.library.matrix.mat3.GenericMatrixVector3
+import com.cave.library.matrix.mat3.IndexedMatrixVector3
 import com.cave.library.matrix.mat3.StaticMatrix3Impl
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.Vector4
@@ -13,7 +13,7 @@ interface StaticMatrix4 {
 
     val translation: Vector3
     val scale: Vector3
-    val rotation: AxisOfRotation
+    val rotation: Rotation
 
     val column: Column
     val row: Row
@@ -56,7 +56,7 @@ interface StaticMatrix4 {
     }
 }
 
-private class StaticMatrix4Impl(private val array: DoubleArray) : StaticMatrix4, ArrayToMatrix {
+private class StaticMatrix4Impl(private val array: DoubleArray) : StaticMatrix4, MatrixContext {
     override val size: Int = 4
 
     private val mat3 by lazy { StaticMatrix3Impl(array, this) }
@@ -67,13 +67,13 @@ private class StaticMatrix4Impl(private val array: DoubleArray) : StaticMatrix4,
         val xIndex = coordsToIndex(2, 0)
         val yIndex = coordsToIndex(2, 1)
         val zIndex = coordsToIndex(2, 2)
-        GenericMatrixVector3(array, xIndex, yIndex, zIndex)
+        IndexedMatrixVector3(array, xIndex, yIndex, zIndex)
     }
 
     override val scale: Vector3
         get() = mat3.scale
 
-    override val rotation: AxisOfRotation
+    override val rotation: Rotation
         get() = mat3.rotation
 
     override val column = StaticMatrix4.Column.create(array)

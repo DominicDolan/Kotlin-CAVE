@@ -1,23 +1,20 @@
 package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.Radian
-import com.cave.library.matrix.ArrayToMatrix
+import com.cave.library.matrix.MatrixContext
 import com.cave.library.matrix.formatted
-import com.cave.library.matrix.mat3.GenericMatrixVector3
+import com.cave.library.matrix.mat3.IndexedMatrixVector3
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
-import com.cave.library.vector.vec3.VariableVector3
-import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
 import com.cave.library.vector.vec4.Vector4
-import kotlin.math.sqrt
 
 
-open class GenericMatrixVector4(
+open class IndexedMatrixVector4(
     array: DoubleArray,
     xIndex: Int, yIndex: Int, zIndex: Int,
     private val wIndex: Int
-) : GenericMatrixVector3(array, xIndex, yIndex, zIndex), Vector4 {
+) : IndexedMatrixVector3(array, xIndex, yIndex, zIndex), Vector4 {
 
     private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super<Vector4>.r }
     override val r: Double
@@ -37,31 +34,31 @@ open class GenericMatrixVector4(
 }
 
 
-class ColumnVector4(column: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : GenericMatrixVector4(
+class ColumnVector4(column: Int, array: DoubleArray, context: MatrixContext)
+    : IndexedMatrixVector4(
     array,
-    arr2Mat.coordsToIndex(column, 0),
-    arr2Mat.coordsToIndex(column, 1),
-    arr2Mat.coordsToIndex(column, 2),
-    arr2Mat.coordsToIndex(column, 3)
+    context.coordsToIndex(column, 0),
+    context.coordsToIndex(column, 1),
+    context.coordsToIndex(column, 2),
+    context.coordsToIndex(column, 3)
 )
 
-class RowVector4(row: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : GenericMatrixVector4(
+class RowVector4(row: Int, array: DoubleArray, context: MatrixContext)
+    : IndexedMatrixVector4(
     array,
-    arr2Mat.coordsToIndex(0, row),
-    arr2Mat.coordsToIndex(1, row),
-    arr2Mat.coordsToIndex(2, row),
-    arr2Mat.coordsToIndex(3, row)
+    context.coordsToIndex(0, row),
+    context.coordsToIndex(1, row),
+    context.coordsToIndex(2, row),
+    context.coordsToIndex(3, row)
 )
 
-open class GenericMatrixVariableVector4(
+open class IndexedMatrixVariableVector4(
     array: DoubleArray,
     xIndex: Int,
     yIndex: Int,
     zIndex: Int,
     private val wIndex: Int
-) : GenericMatrixVector4(array, xIndex, yIndex, zIndex, wIndex), VariableVector4 {
+) : IndexedMatrixVector4(array, xIndex, yIndex, zIndex, wIndex), VariableVector4 {
 
     override var x: Double
         get() = super.x
@@ -79,20 +76,20 @@ open class GenericMatrixVariableVector4(
 }
 
 
-class ColumnVariableVector4(column: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : GenericMatrixVariableVector4(
+class ColumnVariableVector4(column: Int, array: DoubleArray, context: MatrixContext)
+    : IndexedMatrixVariableVector4(
     array,
-    arr2Mat.coordsToIndex(column, 0),
-    arr2Mat.coordsToIndex(column, 1),
-    arr2Mat.coordsToIndex(column, 2),
-    arr2Mat.coordsToIndex(column, 3)
+    context.coordsToIndex(column, 0),
+    context.coordsToIndex(column, 1),
+    context.coordsToIndex(column, 2),
+    context.coordsToIndex(column, 3)
 )
 
-class RowVariableVector4(row: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : GenericMatrixVariableVector4(
+class RowVariableVector4(row: Int, array: DoubleArray, context: MatrixContext)
+    : IndexedMatrixVariableVector4(
     array,
-    arr2Mat.coordsToIndex(0, row),
-    arr2Mat.coordsToIndex(1, row),
-    arr2Mat.coordsToIndex(2, row),
-    arr2Mat.coordsToIndex(3, row)
+    context.coordsToIndex(0, row),
+    context.coordsToIndex(1, row),
+    context.coordsToIndex(2, row),
+    context.coordsToIndex(3, row)
 )

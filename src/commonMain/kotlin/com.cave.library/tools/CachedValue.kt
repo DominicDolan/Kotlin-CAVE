@@ -1,6 +1,7 @@
 package com.cave.library.tools
 
 import com.cave.library.angle.Radian
+import com.cave.library.angle.radians
 
 interface CachedDouble {
     fun get(): Double
@@ -8,25 +9,35 @@ interface CachedDouble {
     companion object {
         fun create(
             dependents: Array<() -> Double>,
-            calculate: () -> Double
+            default: Double = 0.0,
+            calculate: () -> Double,
         ): CachedDouble {
-            return CachedDoubleImpl(dependents, calculate)
+            return CachedDoubleImpl(dependents, default, calculate)
         }
     }
 }
 
 private class CachedDoubleImpl(
     dependents: Array<() -> Double>,
-    private val calculate: () -> Double
+    default: Double = 0.0,
+    private val calculate: () -> Double,
 ) : CachedDouble {
 
-    private var value: Double = calculate()
+    private var value: Double
 
     private val dependents = Dependents(dependents)
 
+    init {
+        val calculated = calculate()
+        value = if (calculated.isFinite()) calculated else default
+    }
+
     override fun get(): Double {
         if (dependents.haveChanged()) {
-            value = calculate()
+            val value = calculate()
+            if (value.isFinite()) {
+                this.value = value
+            }
         }
 
         return value
@@ -39,25 +50,35 @@ interface CachedRadian {
     companion object {
         fun create(
             dependents: Array<() -> Double>,
-            calculate: () -> Radian
+            default: Radian = 0.0.radians,
+            calculate: () -> Radian,
         ): CachedRadian {
-            return CachedRadianImpl(dependents, calculate)
+            return CachedRadianImpl(dependents, default, calculate)
         }
     }
 }
 
 private class CachedRadianImpl(
     dependents: Array<() -> Double>,
-    private val calculate: () -> Radian
+    default: Radian = 0.0.radians,
+    private val calculate: () -> Radian,
 ) : CachedRadian {
 
     private var value: Radian = calculate()
 
     private val dependents = Dependents(dependents)
 
+    init {
+        val calculated = calculate()
+        value = if (calculated.toDouble().isFinite()) calculated else default
+    }
+
     override fun get(): Radian {
         if (dependents.haveChanged()) {
-            value = calculate()
+            val value = calculate()
+            if (value.toDouble().isFinite()) {
+                this.value = value
+            }
         }
 
         return value

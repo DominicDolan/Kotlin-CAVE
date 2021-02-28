@@ -1,6 +1,5 @@
 package com.cave.library.matrix.mat4
 
-import com.cave.library.matrix.ArrayToMatrix
 import com.cave.library.matrix.mat3.Matrix3Creator
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3

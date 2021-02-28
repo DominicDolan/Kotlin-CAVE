@@ -1,23 +1,37 @@
 import com.cave.library.angle.degrees
+import com.cave.library.angle.plus
+import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat3.StaticMatrix3
-import com.cave.library.vector.vec3.Vector3
-import org.joml.AxisAngle4f
-import org.joml.Matrix3f
-import java.lang.Math.toDegrees
-import java.lang.Math.toRadians
 
 fun main() {
-    println("Rotation")
 
-    val joml = Matrix3f().rotate(toRadians(40.0).toFloat(), 0f, 0f, 1f)
-    println(joml)
-    val angle = AxisAngle4f()
-    joml.getRotation(angle)
-    println("AxisAngle4f: $angle, rotation: ${toDegrees(angle.angle.toDouble())}")
-    val sr = StaticMatrix3.rotated(40.degrees, 0.0, 3.0, 4.0)
-    println(sr)
-    println("rotation angle: ${sr.rotation.rotation.toDegrees()}")
-    println("rotation angle: ${sr.rotation.rotation.toRadians()}")
+    var inputAngle = 0.degrees
+    val m = Matrix3.identity()
 
-    println("axis: ${Vector3.from(sr.rotation)}")
+    while (inputAngle.toDouble() < 180.0) {
+        m.rotation.angle = inputAngle.toRadians()
+
+        println("input angle:    $inputAngle")
+        println("rotation angle: ${m.rotation.toDegrees()}")
+        println()
+        inputAngle += 5.degrees
+        Thread.sleep(500)
+    }
+
+}
+
+fun testStaticRotation() {
+
+    var inputAngle = 0.degrees
+
+    while (inputAngle.toDouble() < 180.0) {
+        val sr = StaticMatrix3.rotated(inputAngle, 0.0, 0.0, 1.0)
+
+        println("input angle:    $inputAngle")
+        println("rotation angle: ${sr.rotation.toDegrees()}")
+        println()
+        inputAngle += 5.degrees
+        Thread.sleep(500)
+    }
+
 }

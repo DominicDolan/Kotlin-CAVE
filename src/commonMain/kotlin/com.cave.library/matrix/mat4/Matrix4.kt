@@ -1,10 +1,8 @@
 package com.cave.library.matrix.mat4
 
-import com.cave.library.angle.AxisOfRotation
-import com.cave.library.angle.VariableAxisOfRotation
-import com.cave.library.matrix.ArrayToMatrix
+import com.cave.library.angle.VariableRotation
+import com.cave.library.matrix.MatrixContext
 import com.cave.library.matrix.mat3.Matrix3Impl
-import com.cave.library.matrix.mat3.StaticMatrix3Impl
 import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.VariableVector3
@@ -15,7 +13,7 @@ interface Matrix4 : StaticMatrix4 {
 
     override val translation: VariableVector3
     override val scale: VariableVector3
-    override val rotation: VariableAxisOfRotation
+    override val rotation: VariableRotation
 
     override val column: StaticMatrix4.Column
     override val row: StaticMatrix4.Row
@@ -88,7 +86,7 @@ interface Matrix4 : StaticMatrix4 {
     }
 }
 
-private class Matrix4Impl(private val array: DoubleArray) : Matrix4, ArrayToMatrix {
+private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixContext {
     override val size: Int = 4
     private val mat3 by lazy { Matrix3Impl(array, this) }
 
@@ -133,7 +131,7 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, ArrayToMatr
         get() = TODO("Not yet implemented")
     override val scale: VariableVector3
         get() = TODO("Not yet implemented")
-    override val rotation: VariableAxisOfRotation
+    override val rotation: VariableRotation
         get() = TODO("Not yet implemented")
     override val column: StaticMatrix4.Column
         get() = TODO("Not yet implemented")
@@ -148,7 +146,7 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, ArrayToMatr
 }
 
 private class VariableColumnImpl(private val array: DoubleArray)
-    : Matrix4.Column, ArrayToMatrix by Matrix4 {
+    : Matrix4.Column, MatrixContext by Matrix4 {
     private val columns = Array<VariableVector4>(4) { ColumnVariableVector4(it, array, Matrix4) }
 
     override fun set(column: Int, row: Int, value: Double) {
@@ -167,7 +165,7 @@ private class VariableColumnImpl(private val array: DoubleArray)
 }
 
 private class VariableRowImpl(private val array: DoubleArray)
-    : Matrix4.Row, ArrayToMatrix by Matrix4 {
+    : Matrix4.Row, MatrixContext by Matrix4 {
     private val rows = Array<VariableVector4>(4) { ColumnVariableVector4(it, array, Matrix4) }
 
     override fun set(row: Int, column: Int, value: Double) {

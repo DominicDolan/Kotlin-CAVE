@@ -1,11 +1,10 @@
 package com.cave.library.matrix.mat3
 
-import com.cave.library.matrix.ArrayToMatrix
-import com.cave.library.matrix.mat4.StaticMatrix4
+import com.cave.library.matrix.MatrixContext
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
-abstract class Matrix3Creator<M> : ArrayToMatrix {
+abstract class Matrix3Creator<M> : MatrixContext {
     protected abstract fun create(array: DoubleArray): M
 
     open fun from(array: DoubleArray): M {
@@ -13,9 +12,9 @@ abstract class Matrix3Creator<M> : ArrayToMatrix {
         return create(arr)
     }
 
-    open fun from(matrix4: StaticMatrix4): M {
+    open fun from(matrix3: StaticMatrix3): M {
         val array = DoubleArray(arraySize)
-        matrix4.fill(array)
+        matrix3.fill(array)
         return create(array)
     }
 

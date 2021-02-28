@@ -1,46 +1,47 @@
 package com.cave.library.matrix.mat3
 
 import com.cave.library.angle.Radian
-import com.cave.library.matrix.ArrayToMatrix
+import com.cave.library.matrix.MatrixContext
 import com.cave.library.matrix.formatted
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
-import com.cave.library.vector.vec4.Vector4
 
-
-open class GenericMatrixVector3(
+abstract class MatrixVector3(
     protected val array: DoubleArray,
-    protected val xIndex: Int,
-    protected val yIndex: Int,
-    protected val zIndex: Int
+    protected val xGetter: MatrixContext.(DoubleArray) -> Double,
+    protected val yGetter: MatrixContext.(DoubleArray) -> Double,
+    protected val zGetter: MatrixContext.(DoubleArray) -> Double,
+    private val context: MatrixContext = StaticMatrix3
 ) : Vector3 {
 
     private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }
     override val r: Double
-        get() = rCache.get()
+        get() {
+            return rCache.get()
+        }
 
     private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super.theta }
     override val theta: Radian
         get() = thetaCache.get()
 
     override val x: Double
-        get() = array[xIndex]
+        get() = xGetter(context, array)
     override val y: Double
-        get() = array[yIndex]
+        get() = yGetter(context, array)
     override val z: Double
-        get() = array[zIndex]
+        get() = zGetter(context, array)
 
 
     val normalized: Vector3 by lazy {
         object : Vector3 {
             override val x: Double
-                get() = this@GenericMatrixVector3.x/this@GenericMatrixVector3.r
+                get() = this@MatrixVector3.x/this@MatrixVector3.r
             override val y: Double
-                get() = this@GenericMatrixVector3.y/this@GenericMatrixVector3.r
+                get() = this@MatrixVector3.y/this@MatrixVector3.r
             override val z: Double
-                get() = this@GenericMatrixVector3.z/this@GenericMatrixVector3.r
+                get() = this@MatrixVector3.z/this@MatrixVector3.r
 
             override fun toString(): String {
                 return Vector3.toString(this)
@@ -52,32 +53,37 @@ open class GenericMatrixVector3(
         return "${x.formatted()}  ${y.formatted()}  ${z.formatted()}"
     }
 
-
 }
+open class IndexedMatrixVector3(
+    array: DoubleArray,
+    protected val xIndex: Int,
+    protected val yIndex: Int,
+    protected val zIndex: Int
+) : MatrixVector3(array, { it[xIndex] }, { it[yIndex] }, { it[zIndex] })
 
-open class ColumnVector3(column: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : GenericMatrixVector3(
+open class ColumnVector3(column: Int, array: DoubleArray, context: MatrixContext)
+    : IndexedMatrixVector3(
     array,
-    arr2Mat.coordsToIndex(column, 0),
-    arr2Mat.coordsToIndex(column, 1),
-    arr2Mat.coordsToIndex(column, 2)
+    context.coordsToIndex(column, 0),
+    context.coordsToIndex(column, 1),
+    context.coordsToIndex(column, 2)
 )
 
-open class RowVector3(row: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : GenericMatrixVector3(
+open class RowVector3(row: Int, array: DoubleArray, context: MatrixContext)
+    : IndexedMatrixVector3(
     array,
-    arr2Mat.coordsToIndex(0, row),
-    arr2Mat.coordsToIndex(1, row),
-    arr2Mat.coordsToIndex(2, row)
+    context.coordsToIndex(0, row),
+    context.coordsToIndex(1, row),
+    context.coordsToIndex(2, row)
 )
 
 
-open class GenericMatrixVariableVector3(
+open class IndexedMatrixVariableVector3(
     array: DoubleArray,
     xIndex: Int,
     yIndex: Int,
     zIndex: Int
-) : GenericMatrixVector3(array, xIndex, yIndex, zIndex), VariableVector3 {
+) : IndexedMatrixVector3(array, xIndex, yIndex, zIndex), VariableVector3 {
 
     override var x: Double
         get() = super.x
@@ -91,8 +97,8 @@ open class GenericMatrixVariableVector3(
 
 }
 
-class ColumnVariableVector3(column: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : ColumnVector3(column, array, arr2Mat), VariableVector3 {
+class ColumnVariableVector3(column: Int, array: DoubleArray, context: MatrixContext)
+    : ColumnVector3(column, array, context), VariableVector3 {
 
     override var x: Double
         get() = super.x
@@ -105,8 +111,8 @@ class ColumnVariableVector3(column: Int, array: DoubleArray, arr2Mat: ArrayToMat
         set(value) { array[zIndex] = value }
 }
 
-class RowVariableVector3(column: Int, array: DoubleArray, arr2Mat: ArrayToMatrix)
-    : RowVector3(column, array, arr2Mat), VariableVector3 {
+class RowVariableVector3(column: Int, array: DoubleArray, context: MatrixContext)
+    : RowVector3(column, array, context), VariableVector3 {
 
     override var x: Double
         get() = super.x
