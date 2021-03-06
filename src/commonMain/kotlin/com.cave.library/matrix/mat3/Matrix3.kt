@@ -29,7 +29,7 @@ interface Matrix3 : StaticMatrix3 {
 
         companion object {
             fun create(array: DoubleArray) = object : Column {
-                private val columns = Array(size) { ColumnVariableVector3(it, array, Matrix3) }
+                private val columns = Array(columnCount) { ColumnVariableVector3(it, array, Matrix3) }
 
                 override fun get(column: Int): ColumnVariableVector3 = columns[column]
                 override fun get(column: Int, row: Int) = get(column)[row]
@@ -39,7 +39,7 @@ interface Matrix3 : StaticMatrix3 {
                 }
 
                 override fun set(column: Int, value: Vector4) {
-                    for (row in 0 until size) {
+                    for (row in 0 until columnCount) {
                         set(column, row, value[row])
                     }
                 }
@@ -55,7 +55,7 @@ interface Matrix3 : StaticMatrix3 {
 
         companion object {
             fun create(array: DoubleArray) = object : Row {
-                private val rows = Array(size) { RowVariableVector3(it, array, Matrix3) }
+                private val rows = Array(columnCount) { RowVariableVector3(it, array, Matrix3) }
 
                 override fun get(row: Int): RowVariableVector3 = rows[row]
                 override fun get(row: Int, column: Int) = get(column)[row]
@@ -65,7 +65,7 @@ interface Matrix3 : StaticMatrix3 {
                 }
 
                 override fun set(row: Int, value: Vector4) {
-                    for (column in 0 until size) {
+                    for (column in 0 until columnCount) {
                         set(row, column, value[row])
                     }
                 }
@@ -75,7 +75,8 @@ interface Matrix3 : StaticMatrix3 {
     }
 
     companion object : Matrix3Creator<Matrix3>() {
-        override val size: Int = 3
+        override val columnCount: Int = 3
+        override val rowCount: Int = 3
 
         override fun create(array: DoubleArray): Matrix3 {
             return Matrix3Impl(array)
@@ -139,7 +140,7 @@ internal class Matrix3Impl(private val array: DoubleArray, context: MatrixContex
 }
 
 
-private class RotationVariableImpl(
+internal class RotationVariableImpl(
     private val array: DoubleArray,
     private val defaultRotation: Radian,
     defaultX: Double, defaultY: Double, defaultZ: Double,

@@ -23,7 +23,7 @@ interface StaticMatrix3 {
 
         companion object {
             fun create(array: DoubleArray, context: MatrixContext = StaticMatrix3) = object : Column {
-                private val columns = Array(size) { ColumnVector3(it, array, context) }
+                private val columns = Array(columnCount) { ColumnVector3(it, array, context) }
 
                 override fun get(column: Int, row: Int) = get(column)[row]
                 override fun get(column: Int) = columns[column]
@@ -37,7 +37,7 @@ interface StaticMatrix3 {
 
         companion object {
             fun create(array: DoubleArray, context: MatrixContext = StaticMatrix3) = object : Row {
-                private val rows = Array(size) { RowVector3(it, array, context) }
+                private val rows = Array(columnCount) { RowVector3(it, array, context) }
 
                 override fun get(row: Int, column: Int) = get(row)[column]
                 override fun get(row: Int) = rows[row]
@@ -46,7 +46,8 @@ interface StaticMatrix3 {
     }
 
     companion object : MatrixContext {
-        override val size: Int = 3
+        override val columnCount: Int = 3
+        override val rowCount: Int = 3
 
         fun from(array: DoubleArray): StaticMatrix3 {
             val arr = DoubleArray(arraySize) { if (it < array.size) array[it] else 0.0 }

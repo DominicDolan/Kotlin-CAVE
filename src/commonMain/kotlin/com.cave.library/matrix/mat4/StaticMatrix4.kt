@@ -49,7 +49,8 @@ interface StaticMatrix4 {
     }
 
     companion object : Matrix4Creator<StaticMatrix4>() {
-        override val size: Int = 4
+        override val columnCount: Int = 4
+        override val rowCount: Int = 4
 
         override fun create(array: DoubleArray): StaticMatrix4 = StaticMatrix4Impl(array)
 
@@ -57,7 +58,8 @@ interface StaticMatrix4 {
 }
 
 private class StaticMatrix4Impl(private val array: DoubleArray) : StaticMatrix4, MatrixContext {
-    override val size: Int = 4
+    override val columnCount: Int = 4
+    override val rowCount: Int = 4
 
     private val mat3 by lazy { StaticMatrix3Impl(array, this) }
 

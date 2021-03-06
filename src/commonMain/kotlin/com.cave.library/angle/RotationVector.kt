@@ -50,13 +50,13 @@ internal abstract class AbstractRotation(private val array: DoubleArray, private
     override val angle: Radian
         get() = acos((array[0, 0] + array[1, 1] + array[2, 2] - 1) / 2).radians
 
-    val nonNormalAxis = Axis()
+    private val nonNormalAxis = Axis()
     override val axis: Vector3
         get() {
             return nonNormalAxis.normalized
         }
 
-    override fun toString() = Rotation.toString(this) + " r: ${nonNormalAxis.r}"
+    override fun toString() = Rotation.toString(this)
 
     inner class Axis : MatrixVector3(array,
         xGetter = { it[1, 2] - it[2, 1] },

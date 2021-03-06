@@ -1,8 +1,12 @@
 package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.VariableRotation
+import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.mat3.IndexedMatrixVariableVector3
 import com.cave.library.matrix.mat3.Matrix3Impl
+import com.cave.library.matrix.mat3.RotationVariableImpl
+import com.cave.library.matrix.mat3.StaticMatrix3.Companion.translate
 import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.VariableVector3
@@ -79,7 +83,8 @@ interface Matrix4 : StaticMatrix4 {
     }
 
     companion object : Matrix4Creator<Matrix4>() {
-        override val size: Int = 4
+        override val columnCount: Int = 4
+        override val rowCount: Int = 4
 
         override fun create(array: DoubleArray): Matrix4 = Matrix4Impl(array)
 
@@ -87,8 +92,8 @@ interface Matrix4 : StaticMatrix4 {
 }
 
 private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixContext {
-    override val size: Int = 4
-    private val mat3 by lazy { Matrix3Impl(array, this) }
+    override val columnCount: Int = 4
+    override val rowCount: Int = 4
 
     override fun identity(): Matrix4 {
         array.identity()
@@ -113,7 +118,8 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixConte
     }
 
     override fun translate(x: Double, y: Double, z: Double): Matrix4 {
-        TODO("Not yet implemented")
+        array.translate(x, y, z)
+        return this
     }
 
     override fun scale(x: Double, y: Double, z: Double): Matrix4 {
@@ -127,19 +133,26 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixConte
 
     override fun get(column: Int, row: Int) = array[column, row]
 
-    override val translation: VariableVector3
-        get() = TODO("Not yet implemented")
-    override val scale: VariableVector3
-        get() = TODO("Not yet implemented")
-    override val rotation: VariableRotation
-        get() = TODO("Not yet implemented")
-    override val column: StaticMatrix4.Column
-        get() = TODO("Not yet implemented")
-    override val row: StaticMatrix4.Row
-        get() = TODO("Not yet implemented")
+    override val translation: VariableVector3 by lazy {
+        val xIndex = coordsToIndex(3, 0)
+        val yIndex = coordsToIndex(3, 1)
+        val zIndex = coordsToIndex(3, 2)
+        IndexedMatrixVariableVector3(array, xIndex, yIndex, zIndex)
+    }
+
+    override val scale: VariableVector3 by lazy {
+        val xIndex = coordsToIndex(0, 0)
+        val yIndex = coordsToIndex(1, 1)
+        val zIndex = coordsToIndex(2, 2)
+        IndexedMatrixVariableVector3(array, xIndex, yIndex, zIndex)
+    }
+
+    override val rotation: VariableRotation = RotationVariableImpl(array, 0.0.radians, 0.0, 0.0, 1.0, this)
+    override val column: Matrix4.Column = Matrix4.Column.create(array)
+    override val row: Matrix4.Row = Matrix4.Row.create(array)
 
     override fun fill(array: DoubleArray) {
-        TODO("Not yet implemented")
+        this.array.copyInto(array)
     }
 
 
