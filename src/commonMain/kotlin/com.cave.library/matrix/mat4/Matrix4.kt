@@ -4,9 +4,7 @@ import com.cave.library.angle.VariableRotation
 import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixContext
 import com.cave.library.matrix.mat3.IndexedMatrixVariableVector3
-import com.cave.library.matrix.mat3.Matrix3Impl
 import com.cave.library.matrix.mat3.RotationVariableImpl
-import com.cave.library.matrix.mat3.StaticMatrix3.Companion.translate
 import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.VariableVector3
@@ -58,6 +56,10 @@ interface Matrix4 : StaticMatrix4 {
     }
 
     operator fun set(row: Int, column: Int, value: Double)
+
+    fun set(other: StaticMatrix4)
+
+    operator fun timesAssign(other: StaticMatrix4)
 
     interface Column : StaticMatrix4.Column {
         override fun get(column: Int): VariableVector4
@@ -127,8 +129,16 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixConte
         return this
     }
 
+    override fun set(other: StaticMatrix4) {
+        other.fill(array)
+    }
+
     override fun set(row: Int, column: Int, value: Double) {
         array[column, row] = value
+    }
+
+    override fun timesAssign(other: StaticMatrix4) {
+        array.multiplyIntoArray(this, other)
     }
 
     override fun get(column: Int, row: Int) = array[column, row]
@@ -155,6 +165,15 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixConte
         this.array.copyInto(array)
     }
 
+    override fun fill(array: FloatArray) {
+        this.array.copyInto(array)
+    }
+
+    override fun toString(): String {
+        return row[0].toString() + '\n' +
+                row[1].toString() + '\n' +
+                row[2].toString()
+    }
 
 }
 

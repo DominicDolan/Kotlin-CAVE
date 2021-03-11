@@ -1,8 +1,9 @@
 package com.cave.library.vector.vec3
 
-import com.cave.library.vector.vec2.*
+import com.cave.library.vector.vec2.IntVector2
+import com.cave.library.vector.vec2.VariableIntVector2
 
-interface Vector3i : Vector2i {
+interface IntVector3 : IntVector2 {
     val z: Int
 
 
@@ -25,7 +26,7 @@ interface Vector3i : Vector2i {
     }
 
     companion object {
-        fun create(x: Int, y: Int, z: Int) = object : Vector3i {
+        fun create(x: Int, y: Int, z: Int) = object : IntVector3 {
             override val x: Int = x
             override val y: Int = y
             override val z: Int = z
@@ -34,19 +35,19 @@ interface Vector3i : Vector2i {
 
         }
 
-        fun from(other: Vector3i) = create(other.x, other.y, other.z)
+        fun from(other: IntVector3) = create(other.x, other.y, other.z)
 
-        fun from(xy: Vector2i, z: Int = 0) = create(xy.x, xy.y, z)
+        fun from(xy: IntVector2, z: Int = 0) = create(xy.x, xy.y, z)
 
     }
 }
 
 
-interface VariableVector3i : Vector3i, VariableVector2i {
+interface VariableIntVector3 : IntVector3, VariableIntVector2 {
     override var z: Int
 
     companion object {
-        fun create(x: Int, y: Int, z: Int) = object : VariableVector3i {
+        fun create(x: Int, y: Int, z: Int) = object : VariableIntVector3 {
             override var x: Int = x
             override var y: Int = y
             override var z: Int = z
@@ -55,13 +56,13 @@ interface VariableVector3i : Vector3i, VariableVector2i {
 
         }
 
-        fun from(other: Vector3i) = create(other.x, other.y, other.z)
+        fun from(other: IntVector3) = create(other.x, other.y, other.z)
 
-        fun from(xy: Vector2i, z: Int = 0) = create(xy.x, xy.y, z)
+        fun from(xy: IntVector2, z: Int = 0) = create(xy.x, xy.y, z)
 
     }
 }
 
-operator fun Vector3i.component1() = this.x
-operator fun Vector3i.component2() = this.y
-operator fun Vector3i.component3() = this.z
+operator fun IntVector3.component1() = this.x
+operator fun IntVector3.component2() = this.y
+operator fun IntVector3.component3() = this.z

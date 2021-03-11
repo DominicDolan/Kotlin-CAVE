@@ -1,6 +1,6 @@
 package com.cave.library.vector.vec2
 
-interface Vector2i {
+interface IntVector2 {
     val x: Int
     val y: Int
 
@@ -20,7 +20,7 @@ interface Vector2i {
     }
 
     companion object {
-        fun create(x: Int, y: Int) = object : Vector2i {
+        fun create(x: Int, y: Int) = object : IntVector2 {
             override val x: Int = x
             override val y: Int = y
 
@@ -29,17 +29,26 @@ interface Vector2i {
             }
         }
 
-        fun from(other: Vector2i) = create(other.x, other.y)
+        fun from(other: IntVector2) = create(other.x, other.y)
+
+        fun toString(vector: IntVector2) = "(${vector.x}, ${vector.y})"
     }
 }
 
 
-interface VariableVector2i : Vector2i {
+interface VariableIntVector2 : IntVector2 {
     override var x: Int
     override var y: Int
 
+    fun set(x: Int, y: Int) {
+        this.x = x
+        this.y = y
+    }
+
+    fun set(vector: IntVector2) = set(vector.x, vector.y)
+
     companion object {
-        fun create(x: Int, y: Int) = object : VariableVector2i {
+        fun create(x: Int, y: Int) = object : VariableIntVector2 {
             override var x: Int = x
             override var y: Int = y
 
@@ -48,10 +57,12 @@ interface VariableVector2i : Vector2i {
             }
         }
 
-        fun from(other: Vector2i) = create(other.x, other.y)
+        fun create() = create(0, 0)
+
+        fun from(other: IntVector2) = create(other.x, other.y)
     }
 }
 
 
-operator fun Vector2i.component1() = this.x
-operator fun Vector2i.component2() = this.y
+operator fun IntVector2.component1() = this.x
+operator fun IntVector2.component2() = this.y

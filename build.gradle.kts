@@ -2,8 +2,8 @@ plugins {
     kotlin("multiplatform") version "1.4.21"
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = "com.cave.library"
+version = "0.1"
 
 repositories {
     mavenCentral()

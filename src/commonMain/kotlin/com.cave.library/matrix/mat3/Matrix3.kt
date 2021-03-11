@@ -1,7 +1,9 @@
 package com.cave.library.matrix.mat3
 
-import com.cave.library.angle.*
 import com.cave.library.angle.AbstractRotation
+import com.cave.library.angle.Radian
+import com.cave.library.angle.VariableRotation
+import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixContext
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
@@ -21,6 +23,9 @@ interface Matrix3 : StaticMatrix3 {
     fun zero(): Matrix3
 
     operator fun set(column: Int, row: Int, value: Double)
+    fun set(other: StaticMatrix3)
+
+    operator fun timesAssign(other: StaticMatrix3)
 
     interface Column : StaticMatrix3.Column {
         override fun get(column: Int): ColumnVariableVector3
@@ -112,6 +117,14 @@ internal class Matrix3Impl(private val array: DoubleArray, context: MatrixContex
         array[column, row] = value
     }
 
+    override fun set(other: StaticMatrix3) {
+        other.fill(array)
+    }
+
+    override fun timesAssign(other: StaticMatrix3) {
+        array.multiplyIntoArray(this, other)
+    }
+
     override fun get(column: Int, row: Int): Double {
         return array[column, row]
     }
@@ -129,6 +142,10 @@ internal class Matrix3Impl(private val array: DoubleArray, context: MatrixContex
     override val row: Matrix3.Row = Matrix3.Row.create(array)
 
     override fun fill(array: DoubleArray) {
+        this.array.copyInto(array)
+    }
+
+    override fun fill(array: FloatArray) {
         this.array.copyInto(array)
     }
 

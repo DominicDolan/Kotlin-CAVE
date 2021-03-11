@@ -52,14 +52,16 @@ interface Color {
 
         }
 
-        fun create(color: Color) = rgba(color.r, color.g, color.b, color.a)
+        fun create() = VariableColor.rgba(1.0, 1.0, 1.0, 1.0)
+
+        fun from(color: Color) = rgba(color.r, color.g, color.b, color.a)
 
         fun hex(hex: Long): Color {
-            return create(InlineColor(hex))
+            return from(InlineColor(hex))
         }
 
         fun hsl(hue: Degree, saturation: Double, lightness: Double, alpha: Double = 1.0): Color {
-            return create(InlineColor.hsl(hue, saturation, lightness, alpha))
+            return from(InlineColor.hsl(hue, saturation, lightness, alpha))
         }
 
 
@@ -97,6 +99,8 @@ inline class InlineColor(private val hex: Long): Color {
         fun rgba(r: Double, g: Double, b: Double, a: Double) = InlineColor(rgba2Hex(r, g, b, a))
 
         fun rgba(vector: Vector4) = rgba(vector.x, vector.y, vector.z, vector.w)
+
+        fun create() = rgba(1.0, 1.0, 1.0, 1.0)
 
         fun hsl(hue: Double, saturation: Double, lightness: Double, alpha: Double = 1.0): InlineColor {
             fun f(n: Int, h: Double, s: Double, l: Double): Double {
@@ -167,6 +171,8 @@ interface VariableColor : Color {
 
             }
         }
+
+        fun create() = rgba(1.0, 1.0, 1.0, 1.0)
 
         fun from(color: Color) = rgba(color.r, color.g, color.b, color.a)
         fun from(color: InlineColor) = rgba(color.r, color.g, color.b, color.a)

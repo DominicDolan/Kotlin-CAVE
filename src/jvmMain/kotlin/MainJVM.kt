@@ -2,8 +2,20 @@ import com.cave.library.angle.degrees
 import com.cave.library.angle.plus
 import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat3.StaticMatrix3
+import com.cave.library.matrix.mat4.Matrix4
+import com.cave.library.matrix.mat4.StaticMatrix4
 
 fun main() {
+
+    val m1 = Matrix4.scaled(2.0, 1.0, 1.0)
+    val m2 = StaticMatrix4.translation(3.0, 4.0, 5.0)
+
+    m1 *= m2
+
+    println(m1)
+}
+
+fun testVariableRotation() {
 
     var inputAngle = 0.degrees
     val m = Matrix3.identity()

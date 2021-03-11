@@ -1,8 +1,7 @@
 package com.cave.library.matrix.mat3
 
 import com.cave.library.angle.*
-import com.cave.library.angle.AbstractRotation
-import com.cave.library.matrix.*
+import com.cave.library.matrix.MatrixContext
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
@@ -16,6 +15,7 @@ interface StaticMatrix3 {
     val row: Row
 
     fun fill(array: DoubleArray)
+    fun fill(array: FloatArray)
 
     interface Column {
         operator fun get(column: Int, row: Int): Double
@@ -144,6 +144,10 @@ internal class StaticMatrix3Impl(
     override val row = StaticMatrix3.Row.create(array, this)
 
     override fun fill(array: DoubleArray) {
+        this.array.copyInto(array)
+    }
+
+    override fun fill(array: FloatArray) {
         this.array.copyInto(array)
     }
 

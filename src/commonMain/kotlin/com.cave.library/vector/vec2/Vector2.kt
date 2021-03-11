@@ -18,8 +18,6 @@ interface Vector2 {
 
     val theta get() = atan2(this.y, this.x).radians
 
-    override fun toString(): String
-
     operator fun get(i: Int): Double {
         return if (i == 0) x else if (i == 1) y else throw Exception("OutOfBoundsException: Tried to call 3rd coordinate on a 2D vector")
     }
@@ -40,6 +38,7 @@ interface Vector2 {
 
         fun create(other: Vector2) = create(other.x, other.y)
         fun create(other: InlineVector) = create(other.x, other.y)
+        fun create() = create(0.0, 0.0)
 
         fun toString(vector: Vector2) = "(${vector.x}, ${vector.y})"
     }
@@ -82,6 +81,7 @@ interface VariableVector2 : Vector2 {
             override fun toString() = Vector2.toString(this)
         }
 
+        fun create() = create(0.0, 0.0)
         fun create(other: Vector2) = create(other.x, other.y)
         fun create(other: InlineVector) = create(other.x, other.y)
     }
@@ -89,3 +89,27 @@ interface VariableVector2 : Vector2 {
 
 operator fun Vector2.component1() = this.x
 operator fun Vector2.component2() = this.y
+
+operator fun VariableVector2.plusAssign(vector: Vector2) {
+    this.x += vector.x
+    this.y += vector.y
+}
+
+operator fun VariableVector2.minusAssign(vector: Vector2) {
+    this.x -= vector.x
+    this.y -= vector.y
+}
+
+operator fun VariableVector2.timesAssign(scale: Double) {
+    this.x *= scale
+    this.y *= scale
+}
+
+operator fun VariableVector2.divAssign(scale: Double) {
+    this.x /= scale
+    this.y /= scale
+}
+
+fun Vector2.distanceTo(other: Vector2): Double {
+    return (vec(this) - vec(other)).r
+}

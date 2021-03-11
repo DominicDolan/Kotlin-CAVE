@@ -4,9 +4,11 @@ import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
 import com.cave.library.angle.Rotation
 import com.cave.library.matrix.mat3.StaticMatrix3
+import com.cave.library.matrix.mat4.StaticMatrix4
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec3.dot
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 import kotlin.math.tan
 
@@ -117,6 +119,20 @@ interface MatrixContext {
             for (column in 0 until matrixSize) {
                 this[column, row] = matLeft.row[row].dot(matRight.column[column])
             }
+        }
+    }
+
+    fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix4, matRight: StaticMatrix4) {
+        for (row in 0 until this@MatrixContext.rowCount) {
+            for (column in 0 until this@MatrixContext.columnCount) {
+                this[column, row] = matLeft.row[row].dot(matRight.column[column])
+            }
+        }
+    }
+
+    fun DoubleArray.copyInto(destination: FloatArray) {
+        for (i in 0 until min(arraySize, destination.size)) {
+            destination[i] = this[i].toFloat()
         }
     }
 

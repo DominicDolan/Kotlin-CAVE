@@ -8,8 +8,6 @@ import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
-import kotlin.math.hypot
-import kotlin.math.sqrt
 
 interface Vector4 : Vector3 {
     override val dimension: Int
@@ -52,6 +50,8 @@ interface Vector4 : Vector3 {
             override fun toString() = toString(this)
 
         }
+
+        fun create() = create(0.0, 0.0, 0.0, 0.0)
 
         fun from(other: Vector4) = create(other.x, other.y, other.z, other.w)
 
@@ -109,6 +109,8 @@ interface VariableVector4 : Vector4, VariableVector3 {
             override fun toString() = "($x, $y, $z)"
 
         }
+
+        fun create() = create(0.0, 0.0, 0.0, 0.0)
 
         fun from(other: Vector4) = create(other.x, other.y, other.z, other.w)
 
