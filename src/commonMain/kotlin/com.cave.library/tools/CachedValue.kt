@@ -64,14 +64,9 @@ private class CachedRadianImpl(
     private val calculate: () -> Radian,
 ) : CachedRadian {
 
-    private var value: Radian = calculate()
+    private var value: Radian = default
 
     private val dependents = Dependents(dependents)
-
-    init {
-        val calculated = calculate()
-        value = if (calculated.toDouble().isFinite()) calculated else default
-    }
 
     override fun get(): Radian {
         if (dependents.haveChanged()) {
@@ -87,13 +82,14 @@ private class CachedRadianImpl(
 
 
 private class Dependents(private val dependents: Array<() -> Double>) {
+    private var hasInitialised = false
     private val dependentsCount = dependents.size
     private val cached = DoubleArray(dependentsCount) {
         dependents[it]()
     }
 
     fun haveChanged(): Boolean {
-        var needsRecalculating = false
+        var needsRecalculating = !hasInitialised
         for (i in 0 until dependentsCount) {
             if (cached[i] != dependents[i]()) {
                 cached[i] = dependents[i]()
@@ -101,6 +97,7 @@ private class Dependents(private val dependents: Array<() -> Double>) {
             }
         }
 
+        hasInitialised = true
         return needsRecalculating
     }
 }

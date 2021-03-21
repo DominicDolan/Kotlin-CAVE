@@ -172,7 +172,8 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixConte
     override fun toString(): String {
         return row[0].toString() + '\n' +
                 row[1].toString() + '\n' +
-                row[2].toString()
+                row[2].toString() + '\n' +
+                row[3].toString()
     }
 
 }
@@ -198,7 +199,7 @@ private class VariableColumnImpl(private val array: DoubleArray)
 
 private class VariableRowImpl(private val array: DoubleArray)
     : Matrix4.Row, MatrixContext by Matrix4 {
-    private val rows = Array<VariableVector4>(4) { ColumnVariableVector4(it, array, Matrix4) }
+    private val rows = Array<VariableVector4>(4) { RowVariableVector4(it, array, Matrix4) }
 
     override fun set(row: Int, column: Int, value: Double) {
         array[column, row] = value

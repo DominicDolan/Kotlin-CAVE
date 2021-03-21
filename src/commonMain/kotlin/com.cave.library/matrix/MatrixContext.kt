@@ -1,16 +1,11 @@
 package com.cave.library.matrix
 
-import com.cave.library.angle.Degree
-import com.cave.library.angle.Radian
-import com.cave.library.angle.Rotation
+import com.cave.library.angle.*
 import com.cave.library.matrix.mat3.StaticMatrix3
 import com.cave.library.matrix.mat4.StaticMatrix4
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec3.dot
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
-import kotlin.math.tan
+import kotlin.math.*
 
 interface MatrixContext {
     val columnCount: Int
@@ -20,7 +15,7 @@ interface MatrixContext {
         get() = columnCount*rowCount
 
     fun coordsToIndex(column: Int, row: Int): Int {
-        return row*rowCount+ column
+        return column*columnCount + row
     }
 
     operator fun DoubleArray.get(column: Int, row: Int): Double {
@@ -30,7 +25,7 @@ interface MatrixContext {
 
     operator fun DoubleArray.set(column: Int, row: Int, value: Double) {
         val index = coordsToIndex(column, row)
-        if (index < this.size) {
+        if (index < arraySize) {
             this[index] = value
         }
     }
@@ -93,7 +88,7 @@ interface MatrixContext {
 
     /**
      *  @param fov: The vertical field of view angle in Radians
-     *  @param aspectRatio: The aspect ratio of the view port, height/width
+     *  @param aspectRatio: The aspect ratio of the view port, width/height
      *  @param near: The distance to the near plane
      *  @param far: the distance to the far plane, accepts infinity as a value
      */
@@ -107,7 +102,7 @@ interface MatrixContext {
         this.zero()
 
         this[0, 0] = m00
-        this[1, 1] = m00/aspectRatio
+        this[1, 1] = m00*aspectRatio
         this[2, 2] = m22
         this[2, 3] = -1.0
         this[3, 2] = m32

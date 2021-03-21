@@ -3,16 +3,34 @@ import com.cave.library.angle.plus
 import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat3.StaticMatrix3
 import com.cave.library.matrix.mat4.Matrix4
-import com.cave.library.matrix.mat4.StaticMatrix4
+import org.joml.Matrix4f
+import org.joml.Vector3f
 
 fun main() {
 
-    val m1 = Matrix4.scaled(2.0, 1.0, 1.0)
-    val m2 = StaticMatrix4.translation(3.0, 4.0, 5.0)
+    val m = Matrix4f().translate(1f, 2f, 3f)
 
-    m1 *= m2
+    val m2 = Matrix4.translation(1.0, 2.0, 3.0)
 
-    println(m1)
+    println(m)
+    println(m2)
+    println()
+
+    val translation = Vector3f()
+    m.getTranslation(translation)
+    println(translation)
+
+    println(m2.translation.z)
+    val array = FloatArray(16)
+
+    m.get(array)
+
+    println(array.contentToString())
+
+    val array2 = FloatArray(16)
+    m2.fill(array2)
+    println(array2.contentToString())
+
 }
 
 fun testVariableRotation() {

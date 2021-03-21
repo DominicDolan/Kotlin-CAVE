@@ -5,6 +5,8 @@ import com.cave.library.matrix.mat3.MatrixVector3
 import com.cave.library.tools.hypot
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
+import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.acos
 
 interface Rotation : Angle {
@@ -48,23 +50,39 @@ interface Rotation : Angle {
 internal abstract class AbstractRotation(private val array: DoubleArray, private val context: MatrixContext) : Rotation, MatrixContext by context {
 
     override val angle: Radian
-        get() = acos((array[0, 0] + array[1, 1] + array[2, 2] - 1) / 2).radians
+        get() {
 
+            val trace = array[0, 0] + array[1, 1] + array[2, 2]
+            val angle = safeAcos((trace - 1.0) / 2.0)
+
+            return if (axisX >= 0 && axisY >= 0 && axisZ >=0) angle.radians
+            else (2*PI - angle).radians
+        }
+
+    private fun safeAcos(v: Double): Double {
+        return if (v < -1.0) PI else if (v > +1.0) 0.0 else acos(v)
+    }
     private val nonNormalAxis = Axis()
     override val axis: Vector3
         get() {
             return nonNormalAxis.normalized
         }
 
-    override fun toString() = Rotation.toString(this)
+    private val axisX: Double
+        get() = array[1, 2] - array[2, 1]
+    private val axisY: Double
+        get() = array[2, 0] - array[0, 2]
+    private val axisZ: Double
+        get() = array[0, 1] - array[1, 0]
 
     inner class Axis : MatrixVector3(array,
-        xGetter = { it[1, 2] - it[2, 1] },
-        yGetter = { it[2, 0] - it[0, 2] },
-        zGetter = { it[0, 1] - it[1, 0] },
+        xGetter = { abs(axisX) },
+        yGetter = { abs(axisY) },
+        zGetter = { abs(axisZ) },
         context
     )
 
+    override fun toString() = Rotation.toString(this)
 }
 
 
@@ -75,119 +93,4 @@ interface VariableRotation : Rotation {
 
     fun set(angle: Radian, x: Double, y: Double, z: Double)
     fun set(angle: Degree, x: Double, y: Double, z: Double) = set(angle.toRadians(), x, y, z)
-}
-
-interface RotationVector {
-    val rx: Angle
-    val ry: Angle
-    val rz: Angle
-
-    companion object {
-        fun create(rx: Degree, ry: Degree, rz: Degree) = object : RotationVectorDeg {
-            override val rx: Degree = rx
-            override val ry: Degree = ry
-            override val rz: Degree = rz
-
-        }
-
-        fun create(rx: Radian, ry: Radian, rz: Radian) = object : RotationVectorRad {
-            override val rx: Radian = rx
-            override val ry: Radian = ry
-            override val rz: Radian = rz
-        }
-
-        fun createVar(rx: Degree, ry: Degree, rz: Degree) = VariableRotationVector.create(rx, ry, rz)
-        fun createVar(rx: Radian, ry: Radian, rz: Radian) = VariableRotationVector.create(rx, ry, rz)
-
-        fun from(rotation: RotationVector) = object : RotationVector {
-            override val rx: Angle = rotation.rx
-            override val ry: Angle = rotation.ry
-            override val rz: Angle = rotation.rz
-        }
-
-        fun from(rotation: RotationVectorDeg) = create(rotation.rx, rotation.ry, rotation.rz)
-        fun from(rotation: RotationVectorRad) = create(rotation.rx, rotation.ry, rotation.rz)
-    }
-}
-
-interface RotationVectorDeg : RotationVector {
-    override val rx: Degree
-    override val ry: Degree
-    override val rz: Degree
-}
-
-interface RotationVectorRad : RotationVector {
-    override val rx: Radian
-    override val ry: Radian
-    override val rz: Radian
-}
-
-interface VariableRotationVector : RotationVector {
-    override val rx: Angle
-    override val ry: Angle
-    override val rz: Angle
-
-    fun set(rx: Degree, ry: Degree, rz: Degree)
-    fun set(rx: Radian, ry: Radian, rz: Radian)
-
-    fun set(rotation: VariableRotationVectorDeg) {
-        set(rotation.rx, rotation.ry, rotation.rz)
-    }
-
-    fun set(rotation: VariableRotationVectorRad) {
-        set(rotation.rx, rotation.ry, rotation.rz)
-    }
-
-    companion object {
-        fun create(rx: Degree, ry: Degree, rz: Degree) = object : VariableRotationVectorDeg {
-            override var rx: Degree = rx
-            override var ry: Degree = ry
-            override var rz: Degree = rz
-
-        }
-
-        fun create(rx: Radian, ry: Radian, rz: Radian) = object : VariableRotationVectorRad {
-            override var rx: Radian = rx
-            override var ry: Radian = ry
-            override var rz: Radian = rz
-
-        }
-    }
-}
-
-interface VariableRotationVectorDeg : VariableRotationVector, RotationVectorDeg {
-    override var rx: Degree
-    override var ry: Degree
-    override var rz: Degree
-
-    override fun set(rx: Degree, ry: Degree, rz: Degree) {
-        this.rx = rx
-        this.ry = ry
-        this.rz = rx
-    }
-
-    override fun set(rx: Radian, ry: Radian, rz: Radian) {
-        this.rx = rx.toDegrees()
-        this.ry = ry.toDegrees()
-        this.rz = rx.toDegrees()
-    }
-
-}
-
-interface VariableRotationVectorRad : VariableRotationVector, RotationVectorRad {
-    override var rx: Radian
-    override var ry: Radian
-    override var rz: Radian
-
-    override fun set(rx: Degree, ry: Degree, rz: Degree) {
-        this.rx = rx.toRadians()
-        this.ry = ry.toRadians()
-        this.rz = rx.toRadians()
-    }
-    override fun set(rx: Radian, ry: Radian, rz: Radian) {
-        this.rx = rx
-        this.ry = ry
-        this.rz = rx
-    }
-
 }
