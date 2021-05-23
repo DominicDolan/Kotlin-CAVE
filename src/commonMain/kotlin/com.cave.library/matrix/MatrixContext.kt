@@ -1,11 +1,17 @@
 package com.cave.library.matrix
 
-import com.cave.library.angle.*
+import com.cave.library.angle.Degree
+import com.cave.library.angle.Radian
+import com.cave.library.angle.Rotation
 import com.cave.library.matrix.mat3.StaticMatrix3
 import com.cave.library.matrix.mat4.StaticMatrix4
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec3.dot
-import kotlin.math.*
+import com.cave.library.vector.vec4.dot
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
+import kotlin.math.tan
 
 interface MatrixContext {
     val columnCount: Int
@@ -14,16 +20,16 @@ interface MatrixContext {
     val arraySize: Int
         get() = columnCount*rowCount
 
-    fun coordsToIndex(column: Int, row: Int): Int {
-        return column*columnCount + row
+    fun coordsToIndex(row: Int, column: Int): Int {
+        return row*rowCount + column
     }
 
-    operator fun DoubleArray.get(column: Int, row: Int): Double {
+    operator fun DoubleArray.get(row: Int, column: Int): Double {
         val index = coordsToIndex(column, row)
         return this[index]
     }
 
-    operator fun DoubleArray.set(column: Int, row: Int, value: Double) {
+    operator fun DoubleArray.set(row: Int, column: Int, value: Double) {
         val index = coordsToIndex(column, row)
         if (index < arraySize) {
             this[index] = value
@@ -80,9 +86,9 @@ interface MatrixContext {
         val xz = x * z * c
         val yz = y * z * c
 
-        this[0, 0] = (cos + x * x * c); this[1, 0] = (xy - z * sin);    this[2, 0] = (xz + y * sin)
-        this[0, 1] = (xy + z * sin);    this[1, 1] = (cos + y * y * c); this[2, 1] = (yz - x * sin)
-        this[0, 2] = (xz - y * sin);    this[1, 2] = (yz + x * sin);    this[2, 2] = (cos + z * z * c)
+        this[0, 0] = (cos + x * x * c); this[0, 1] = (xy - z * sin);    this[0, 2] = (xz + y * sin)
+        this[1, 0] = (xy + z * sin);    this[1, 1] = (cos + y * y * c); this[1, 2] = (yz - x * sin)
+        this[2, 0] = (xz - y * sin);    this[2, 1] = (yz + x * sin);    this[2, 2] = (cos + z * z * c)
 
     }
 
@@ -94,35 +100,38 @@ interface MatrixContext {
      */
     fun DoubleArray.perspective(fov: Radian, aspectRatio: Double, near: Double, far: Double) {
         val errorCorrection = 1E-7
-        val m00 = 1.0/ tan(fov.toDouble()/2.0)
+        val m11 = 1.0/ tan(fov.toDouble()/2.0)
         val isInfinite = far > 0.0 && far.isInfinite()
 
         val m22 = if (isInfinite) errorCorrection - 1.0 else -(far + near)/(far - near)
-        val m32 = if (isInfinite) (errorCorrection - 2.0)*near else (-2*far*near)/(far - near)
+        val m23 = if (isInfinite) (errorCorrection - 2.0)*near else (-2*far*near)/(far - near)
         this.zero()
 
-        this[0, 0] = m00
-        this[1, 1] = m00*aspectRatio
+        this[0, 0] = m11/aspectRatio
+        this[1, 1] = m11
         this[2, 2] = m22
-        this[2, 3] = -1.0
-        this[3, 2] = m32
+        this[2, 3] = m23
+        this[3, 2] = -1.0
     }
 
-    fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix3, matRight: StaticMatrix3) {
-        val matrixSize = this@MatrixContext.columnCount
-        for (row in 0 until matrixSize) {
-            for (column in 0 until matrixSize) {
-                this[column, row] = matLeft.row[row].dot(matRight.column[column])
-            }
+    fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix3, matRight: StaticMatrix3, row: Int = 0, column: Int = 0) {
+        val result = matLeft.row[row].dot(matRight.column[column])
+        if (row < this@MatrixContext.rowCount - 1) {
+            multiplyIntoArray(matLeft, matRight, row + 1, column)
+        } else if (column < this@MatrixContext.columnCount - 1) {
+            multiplyIntoArray(matLeft, matRight, 0, column+1)
         }
+        this[row, column] = result
     }
 
-    fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix4, matRight: StaticMatrix4) {
-        for (row in 0 until this@MatrixContext.rowCount) {
-            for (column in 0 until this@MatrixContext.columnCount) {
-                this[column, row] = matLeft.row[row].dot(matRight.column[column])
-            }
+    fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix4, matRight: StaticMatrix4, row: Int = 0, column: Int = 0) {
+        val result = matLeft.row[row].dot(matRight.column[column])
+        if (row < this@MatrixContext.rowCount - 1) {
+            multiplyIntoArray(matLeft, matRight, row + 1, column)
+        } else if (column < this@MatrixContext.columnCount - 1) {
+            multiplyIntoArray(matLeft, matRight, 0, column+1)
         }
+        this[row, column] = result
     }
 
     fun DoubleArray.copyInto(destination: FloatArray) {

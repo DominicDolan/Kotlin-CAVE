@@ -31,7 +31,19 @@ kotlin {
             }
 
         }
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.joml:joml:+")
+                implementation(kotlin("test-junit"))
+            }
+
+        }
         val commonMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+            }
+        }
+        val commonTest by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
             }

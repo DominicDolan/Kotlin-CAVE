@@ -1,6 +1,6 @@
 package com.cave.library.matrix.mat4
 
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.matrix.mat3.Matrix3Creator
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
@@ -28,9 +28,9 @@ abstract class Matrix4Creator<M> : Matrix3Creator<M>() {
      *  @param near: The distance to the near plane
      *  @param far: the distance to the far plane, accepts infinity as a value
      */
-    fun perspective(fov: Radian, aspectRatio: Double, near: Double, far: Double): M {
+    fun perspective(fov: Angle, aspectRatio: Double, near: Double = 0.0, far: Double = Double.POSITIVE_INFINITY): M {
         val array = DoubleArray(arraySize)
-        array.perspective(fov, aspectRatio, near, far)
+        array.perspective(fov.toRadians(), aspectRatio, near, far)
         return create(array)
     }
 

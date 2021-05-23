@@ -9,7 +9,7 @@ import com.cave.library.vector.vec4.Vector4
 
 
 interface StaticMatrix4 {
-    operator fun get(column: Int, row: Int): Double
+    operator fun get(row: Int, column: Int): Double
 
     val translation: Vector3
     val scale: Vector3
@@ -22,14 +22,14 @@ interface StaticMatrix4 {
     fun fill(array: FloatArray)
 
     interface Column {
-        operator fun get(column: Int, row: Int): Double
+        operator fun get(row: Int, column: Int): Double
         operator fun get(column: Int): Vector4
 
         companion object {
             fun create(array: DoubleArray) = object : Column {
                 private val columns = Array<Vector4>(4) { ColumnVector4(it, array, StaticMatrix4) }
 
-                override fun get(column: Int, row: Int) = get(column)[row]
+                override fun get(row: Int, column: Int) = get(column)[row]
                 override fun get(column: Int) = columns[column]
             }
         }
@@ -64,7 +64,7 @@ private class StaticMatrix4Impl(private val array: DoubleArray) : StaticMatrix4,
 
     private val mat3 by lazy { StaticMatrix3Impl(array, this) }
 
-    override fun get(column: Int, row: Int) = array[column, row]
+    override fun get(row: Int, column: Int) = array[row, column]
 
     override val translation: Vector3 by lazy {
         val xIndex = coordsToIndex(2, 0)

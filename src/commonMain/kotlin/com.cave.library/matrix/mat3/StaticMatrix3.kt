@@ -6,7 +6,7 @@ import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
 interface StaticMatrix3 {
-    operator fun get(column: Int, row: Int): Double
+    operator fun get(row: Int, column: Int): Double
 
     val scale: Vector3
     val rotation: Rotation
@@ -18,14 +18,14 @@ interface StaticMatrix3 {
     fun fill(array: FloatArray)
 
     interface Column {
-        operator fun get(column: Int, row: Int): Double
+        operator fun get(row: Int, column: Int): Double
         operator fun get(column: Int): ColumnVector3
 
         companion object {
             fun create(array: DoubleArray, context: MatrixContext = StaticMatrix3) = object : Column {
                 private val columns = Array(columnCount) { ColumnVector3(it, array, context) }
 
-                override fun get(column: Int, row: Int) = get(column)[row]
+                override fun get(row: Int, column: Int) = get(column)[row]
                 override fun get(column: Int) = columns[column]
             }
         }
@@ -126,7 +126,7 @@ internal class StaticMatrix3Impl(
     defaultRotation: Rotation? = null
 ) : StaticMatrix3, MatrixContext by context{
 
-    override fun get(column: Int, row: Int) = array[column, row]
+    override fun get(row: Int, column: Int) = array[row, column]
 
     override val scale: Vector3 by lazy {
         val xIndex = coordsToIndex(0, 0)

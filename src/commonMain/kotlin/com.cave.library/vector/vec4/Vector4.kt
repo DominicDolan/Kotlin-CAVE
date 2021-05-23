@@ -126,3 +126,6 @@ operator fun Vector4.component1() = this.x
 operator fun Vector4.component2() = this.y
 operator fun Vector4.component3() = this.z
 operator fun Vector4.component4() = this.w
+
+fun Vector4.dot(x: Double, y: Double, z: Double, w: Double) = this.x*x + this.y*y + this.z*z + this.w*w
+fun Vector4.dot(other: Vector4) = dot(other.x, other.y, other.z, other.w)

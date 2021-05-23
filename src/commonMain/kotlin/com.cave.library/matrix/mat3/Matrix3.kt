@@ -22,14 +22,14 @@ interface Matrix3 : StaticMatrix3 {
     fun transpose(): Matrix3
     fun zero(): Matrix3
 
-    operator fun set(column: Int, row: Int, value: Double)
+    operator fun set(row: Int, column: Int, value: Double)
     fun set(other: StaticMatrix3)
 
     operator fun timesAssign(other: StaticMatrix3)
 
     interface Column : StaticMatrix3.Column {
         override fun get(column: Int): ColumnVariableVector3
-        operator fun set(column: Int, row: Int, value: Double)
+        operator fun set(row: Int, column: Int, value: Double)
         operator fun set(column: Int, value: Vector4)
 
         companion object {
@@ -37,9 +37,9 @@ interface Matrix3 : StaticMatrix3 {
                 private val columns = Array(columnCount) { ColumnVariableVector3(it, array, Matrix3) }
 
                 override fun get(column: Int): ColumnVariableVector3 = columns[column]
-                override fun get(column: Int, row: Int) = get(column)[row]
+                override fun get(row: Int, column: Int) = get(column)[row]
 
-                override fun set(column: Int, row: Int, value: Double) {
+                override fun set(row: Int, column: Int, value: Double) {
                     get(column)[row] = value
                 }
 
@@ -113,8 +113,8 @@ internal class Matrix3Impl(private val array: DoubleArray, context: MatrixContex
         return this
     }
 
-    override fun set(column: Int, row: Int, value: Double) {
-        array[column, row] = value
+    override fun set(row: Int, column: Int, value: Double) {
+        array[row, column] = value
     }
 
     override fun set(other: StaticMatrix3) {
@@ -125,8 +125,8 @@ internal class Matrix3Impl(private val array: DoubleArray, context: MatrixContex
         array.multiplyIntoArray(this, other)
     }
 
-    override fun get(column: Int, row: Int): Double {
-        return array[column, row]
+    override fun get(row: Int, column: Int): Double {
+        return array[row, column]
     }
 
     override val scale: VariableVector3 by lazy {
