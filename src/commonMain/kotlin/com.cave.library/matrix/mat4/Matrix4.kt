@@ -4,7 +4,7 @@ import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
 import com.cave.library.angle.VariableRotation
 import com.cave.library.angle.radians
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.mat3.IndexedMatrixVariableVector3
 import com.cave.library.matrix.mat3.RotationVariableImpl
 import com.cave.library.vector.vec2.timesAssign
@@ -68,7 +68,7 @@ interface Matrix4 : StaticMatrix4 {
     }
 }
 
-private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixContext {
+private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixArrayTransforms {
     override val columnCount: Int = 4
     override val rowCount: Int = 4
 
@@ -165,7 +165,7 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixConte
 }
 
 private class VariableColumnImpl(private val array: DoubleArray)
-    : Matrix4.Column, MatrixContext by Matrix4 {
+    : Matrix4.Column, MatrixArrayTransforms by Matrix4 {
     private val columns = Array<VariableVector4>(4) { ColumnVariableVector4(it, array, Matrix4) }
 
     override fun set(row: Int, column: Int, value: Double) {
@@ -184,7 +184,7 @@ private class VariableColumnImpl(private val array: DoubleArray)
 }
 
 private class VariableRowImpl(private val array: DoubleArray)
-    : Matrix4.Row, MatrixContext by Matrix4 {
+    : Matrix4.Row, MatrixArrayTransforms by Matrix4 {
     private val rows = Array<VariableVector4>(4) { RowVariableVector4(it, array, Matrix4) }
 
     override fun set(row: Int, column: Int, value: Double) {

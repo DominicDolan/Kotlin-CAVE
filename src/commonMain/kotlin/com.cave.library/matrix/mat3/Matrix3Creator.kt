@@ -1,10 +1,10 @@
 package com.cave.library.matrix.mat3
 
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
-abstract class Matrix3Creator<M> : MatrixContext {
+abstract class Matrix3Creator<M> : MatrixArrayTransforms {
     protected abstract fun create(array: DoubleArray): M
 
     open fun from(array: DoubleArray): M {

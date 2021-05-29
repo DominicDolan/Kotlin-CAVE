@@ -1,7 +1,7 @@
 package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.Radian
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.formatted
 import com.cave.library.matrix.mat3.IndexedMatrixVector3
 import com.cave.library.tools.CachedDouble
@@ -34,22 +34,22 @@ open class IndexedMatrixVector4(
 }
 
 
-class ColumnVector4(column: Int, array: DoubleArray, context: MatrixContext)
+class ColumnVector4(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
     : IndexedMatrixVector4(
     array,
-    context.coordsToIndex(column, 0),
-    context.coordsToIndex(column, 1),
-    context.coordsToIndex(column, 2),
-    context.coordsToIndex(column, 3)
+    transforms.coordsToIndex(column, 0),
+    transforms.coordsToIndex(column, 1),
+    transforms.coordsToIndex(column, 2),
+    transforms.coordsToIndex(column, 3)
 )
 
-class RowVector4(row: Int, array: DoubleArray, context: MatrixContext)
+class RowVector4(row: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
     : IndexedMatrixVector4(
     array,
-    context.coordsToIndex(0, row),
-    context.coordsToIndex(1, row),
-    context.coordsToIndex(2, row),
-    context.coordsToIndex(3, row)
+    transforms.coordsToIndex(0, row),
+    transforms.coordsToIndex(1, row),
+    transforms.coordsToIndex(2, row),
+    transforms.coordsToIndex(3, row)
 )
 
 open class IndexedMatrixVariableVector4(
@@ -76,20 +76,20 @@ open class IndexedMatrixVariableVector4(
 }
 
 
-class ColumnVariableVector4(column: Int, array: DoubleArray, context: MatrixContext)
+class ColumnVariableVector4(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
     : IndexedMatrixVariableVector4(
     array,
-    context.coordsToIndex(column, 0),
-    context.coordsToIndex(column, 1),
-    context.coordsToIndex(column, 2),
-    context.coordsToIndex(column, 3)
+    transforms.coordsToIndex(column, 0),
+    transforms.coordsToIndex(column, 1),
+    transforms.coordsToIndex(column, 2),
+    transforms.coordsToIndex(column, 3)
 )
 
-class RowVariableVector4(row: Int, array: DoubleArray, context: MatrixContext)
+class RowVariableVector4(row: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
     : IndexedMatrixVariableVector4(
     array,
-    context.coordsToIndex(0, row),
-    context.coordsToIndex(1, row),
-    context.coordsToIndex(2, row),
-    context.coordsToIndex(3, row)
+    transforms.coordsToIndex(0, row),
+    transforms.coordsToIndex(1, row),
+    transforms.coordsToIndex(2, row),
+    transforms.coordsToIndex(3, row)
 )

@@ -13,7 +13,7 @@ import kotlin.math.min
 import kotlin.math.sin
 import kotlin.math.tan
 
-interface MatrixContext {
+interface MatrixArrayTransforms {
     val columnCount: Int
     val rowCount: Int
 
@@ -116,9 +116,9 @@ interface MatrixContext {
 
     fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix3, matRight: StaticMatrix3, row: Int = 0, column: Int = 0) {
         val result = matLeft.row[row].dot(matRight.column[column])
-        if (row < this@MatrixContext.rowCount - 1) {
+        if (row < this@MatrixArrayTransforms.rowCount - 1) {
             multiplyIntoArray(matLeft, matRight, row + 1, column)
-        } else if (column < this@MatrixContext.columnCount - 1) {
+        } else if (column < this@MatrixArrayTransforms.columnCount - 1) {
             multiplyIntoArray(matLeft, matRight, 0, column+1)
         }
         this[row, column] = result
@@ -126,9 +126,9 @@ interface MatrixContext {
 
     fun DoubleArray.multiplyIntoArray(matLeft: StaticMatrix4, matRight: StaticMatrix4, row: Int = 0, column: Int = 0) {
         val result = matLeft.row[row].dot(matRight.column[column])
-        if (row < this@MatrixContext.rowCount - 1) {
+        if (row < this@MatrixArrayTransforms.rowCount - 1) {
             multiplyIntoArray(matLeft, matRight, row + 1, column)
-        } else if (column < this@MatrixContext.columnCount - 1) {
+        } else if (column < this@MatrixArrayTransforms.columnCount - 1) {
             multiplyIntoArray(matLeft, matRight, 0, column+1)
         }
         this[row, column] = result

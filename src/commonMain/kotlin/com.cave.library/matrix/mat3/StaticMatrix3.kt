@@ -1,7 +1,7 @@
 package com.cave.library.matrix.mat3
 
 import com.cave.library.angle.*
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
@@ -22,8 +22,8 @@ interface StaticMatrix3 {
         operator fun get(column: Int): ColumnVector3
 
         companion object {
-            fun create(array: DoubleArray, context: MatrixContext = StaticMatrix3) = object : Column {
-                private val columns = Array(columnCount) { ColumnVector3(it, array, context) }
+            fun create(array: DoubleArray, transforms: MatrixArrayTransforms = StaticMatrix3) = object : Column {
+                private val columns = Array(columnCount) { ColumnVector3(it, array, transforms) }
 
                 override fun get(row: Int, column: Int) = get(column)[row]
                 override fun get(column: Int) = columns[column]
@@ -36,8 +36,8 @@ interface StaticMatrix3 {
         operator fun get(row: Int): RowVector3
 
         companion object {
-            fun create(array: DoubleArray, context: MatrixContext = StaticMatrix3) = object : Row {
-                private val rows = Array(columnCount) { RowVector3(it, array, context) }
+            fun create(array: DoubleArray, transforms: MatrixArrayTransforms = StaticMatrix3) = object : Row {
+                private val rows = Array(columnCount) { RowVector3(it, array, transforms) }
 
                 override fun get(row: Int, column: Int) = get(row)[column]
                 override fun get(row: Int) = rows[row]
@@ -45,7 +45,7 @@ interface StaticMatrix3 {
         }
     }
 
-    companion object : MatrixContext {
+    companion object : MatrixArrayTransforms {
         override val columnCount: Int = 3
         override val rowCount: Int = 3
 
@@ -122,9 +122,9 @@ interface StaticMatrix3 {
 
 internal class StaticMatrix3Impl(
     private val array: DoubleArray,
-    context: MatrixContext = StaticMatrix3,
+    transforms: MatrixArrayTransforms = StaticMatrix3,
     defaultRotation: Rotation? = null
-) : StaticMatrix3, MatrixContext by context{
+) : StaticMatrix3, MatrixArrayTransforms by transforms{
 
     override fun get(row: Int, column: Int) = array[row, column]
 
@@ -162,14 +162,14 @@ internal class StaticRotationImpl(
     array: DoubleArray,
     defaultRotation: Radian,
     defaultX: Double, defaultY: Double, defaultZ: Double,
-    context: MatrixContext = StaticMatrix3
-    ) : AbstractRotation(array, context), Rotation {
+    transforms: MatrixArrayTransforms = StaticMatrix3
+    ) : AbstractRotation(array, transforms), Rotation {
 
     override val angle: Radian
     override val axis: Vector3
 
-    constructor(array: DoubleArray, other: Rotation, context: MatrixContext = StaticMatrix3)
-            : this(array, other.angle, other.axis.x, other.axis.y, other.axis.z, context)
+    constructor(array: DoubleArray, other: Rotation, transforms: MatrixArrayTransforms = StaticMatrix3)
+            : this(array, other.angle, other.axis.x, other.axis.y, other.axis.z, transforms)
 
     init {
         val rotation = super.angle

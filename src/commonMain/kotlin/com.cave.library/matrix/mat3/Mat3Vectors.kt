@@ -1,7 +1,7 @@
 package com.cave.library.matrix.mat3
 
 import com.cave.library.angle.Radian
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.formatted
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
@@ -10,10 +10,10 @@ import com.cave.library.vector.vec3.Vector3
 
 abstract class MatrixVector3(
     protected val array: DoubleArray,
-    protected val xGetter: MatrixContext.(DoubleArray) -> Double,
-    protected val yGetter: MatrixContext.(DoubleArray) -> Double,
-    protected val zGetter: MatrixContext.(DoubleArray) -> Double,
-    private val context: MatrixContext = StaticMatrix3
+    protected val xGetter: MatrixArrayTransforms.(DoubleArray) -> Double,
+    protected val yGetter: MatrixArrayTransforms.(DoubleArray) -> Double,
+    protected val zGetter: MatrixArrayTransforms.(DoubleArray) -> Double,
+    private val transforms: MatrixArrayTransforms = StaticMatrix3
 ) : Vector3 {
 
     private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }
@@ -27,11 +27,11 @@ abstract class MatrixVector3(
         get() = thetaCache.get()
 
     override val x: Double
-        get() = xGetter(context, array)
+        get() = xGetter(transforms, array)
     override val y: Double
-        get() = yGetter(context, array)
+        get() = yGetter(transforms, array)
     override val z: Double
-        get() = zGetter(context, array)
+        get() = zGetter(transforms, array)
 
 
     val normalized: Vector3 by lazy {
@@ -61,20 +61,20 @@ open class IndexedMatrixVector3(
     protected val zIndex: Int
 ) : MatrixVector3(array, { it[xIndex] }, { it[yIndex] }, { it[zIndex] })
 
-open class ColumnVector3(column: Int, array: DoubleArray, context: MatrixContext)
+open class ColumnVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
     : IndexedMatrixVector3(
     array,
-    context.coordsToIndex(column, 0),
-    context.coordsToIndex(column, 1),
-    context.coordsToIndex(column, 2)
+    transforms.coordsToIndex(column, 0),
+    transforms.coordsToIndex(column, 1),
+    transforms.coordsToIndex(column, 2)
 )
 
-open class RowVector3(row: Int, array: DoubleArray, context: MatrixContext)
+open class RowVector3(row: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
     : IndexedMatrixVector3(
     array,
-    context.coordsToIndex(0, row),
-    context.coordsToIndex(1, row),
-    context.coordsToIndex(2, row)
+    transforms.coordsToIndex(0, row),
+    transforms.coordsToIndex(1, row),
+    transforms.coordsToIndex(2, row)
 )
 
 
@@ -97,8 +97,8 @@ open class IndexedMatrixVariableVector3(
 
 }
 
-class ColumnVariableVector3(column: Int, array: DoubleArray, context: MatrixContext)
-    : ColumnVector3(column, array, context), VariableVector3 {
+class ColumnVariableVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
+    : ColumnVector3(column, array, transforms), VariableVector3 {
 
     override var x: Double
         get() = super.x
@@ -111,8 +111,8 @@ class ColumnVariableVector3(column: Int, array: DoubleArray, context: MatrixCont
         set(value) { array[zIndex] = value }
 }
 
-class RowVariableVector3(column: Int, array: DoubleArray, context: MatrixContext)
-    : RowVector3(column, array, context), VariableVector3 {
+class RowVariableVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
+    : RowVector3(column, array, transforms), VariableVector3 {
 
     override var x: Double
         get() = super.x

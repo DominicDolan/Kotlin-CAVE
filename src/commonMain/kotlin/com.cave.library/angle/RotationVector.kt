@@ -1,6 +1,6 @@
 package com.cave.library.angle
 
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.mat3.MatrixVector3
 import com.cave.library.tools.hypot
 import com.cave.library.vector.vec3.VariableVector3
@@ -47,7 +47,7 @@ interface Rotation : Angle {
 }
 
 
-internal abstract class AbstractRotation(private val array: DoubleArray, private val context: MatrixContext) : Rotation, MatrixContext by context {
+internal abstract class AbstractRotation(private val array: DoubleArray, private val transforms: MatrixArrayTransforms) : Rotation, MatrixArrayTransforms by transforms {
 
     override val angle: Radian
         get() {
@@ -79,7 +79,7 @@ internal abstract class AbstractRotation(private val array: DoubleArray, private
         xGetter = { abs(axisX) },
         yGetter = { abs(axisY) },
         zGetter = { abs(axisZ) },
-        context
+        transforms
     )
 
     override fun toString() = Rotation.toString(this)

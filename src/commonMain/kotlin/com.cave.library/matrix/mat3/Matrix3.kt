@@ -4,7 +4,7 @@ import com.cave.library.angle.AbstractRotation
 import com.cave.library.angle.Radian
 import com.cave.library.angle.VariableRotation
 import com.cave.library.angle.radians
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
 import com.cave.library.vector.vec3.VariableVector3
@@ -90,7 +90,7 @@ interface Matrix3 : StaticMatrix3 {
 
 }
 
-internal class Matrix3Impl(private val array: DoubleArray, context: MatrixContext = Matrix3) : Matrix3, MatrixContext by context {
+internal class Matrix3Impl(private val array: DoubleArray, transforms: MatrixArrayTransforms = Matrix3) : Matrix3, MatrixArrayTransforms by transforms {
     override fun identity(): Matrix3 {
         array.identity()
         return this
@@ -161,8 +161,8 @@ internal class RotationVariableImpl(
     private val array: DoubleArray,
     private val defaultRotation: Radian,
     defaultX: Double, defaultY: Double, defaultZ: Double,
-    context: MatrixContext,
-) : AbstractRotation(array, context), VariableRotation {
+    transforms: MatrixArrayTransforms,
+) : AbstractRotation(array, transforms), VariableRotation {
 
     private val angleCache = CachedRadian.create(arrayOf({ array[0, 0] }, { array[1, 1] }, { array[2, 2] })) {
         super.angle

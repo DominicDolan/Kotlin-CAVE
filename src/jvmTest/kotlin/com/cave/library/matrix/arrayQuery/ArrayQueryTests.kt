@@ -1,6 +1,6 @@
 package com.cave.library.matrix.arrayQuery
 
-import com.cave.library.matrix.MatrixContext
+import com.cave.library.matrix.MatrixArrayTransforms
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -36,7 +36,7 @@ class ArrayQueryTests {
 
     }
 
-    class BasicArrayQuery(private val array: DoubleArray, override val columnCount: Int, override val rowCount: Int) : MatrixContext {
+    class BasicArrayQuery(private val array: DoubleArray, override val columnCount: Int, override val rowCount: Int) : MatrixArrayTransforms {
         fun get(row: Int, column: Int): Double {
             return array[row, column]
         }

@@ -6,6 +6,7 @@ import com.cave.library.matrix.joml.toDoubleArray
 import com.cave.library.testUtils.areWithinError
 import com.cave.library.testUtils.contentEquals
 import com.cave.library.testUtils.createIdentifyableMatrix4DoubleArray
+import com.cave.library.vector.vec2.vec
 import com.cave.library.vector.vec4.dot
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -36,23 +37,23 @@ class Matrix4CaveVsJomlTests {
         val joml = createMatrix4f(createIdentifyableMatrix4DoubleArray())
 
         assertAreWithinError(joml.m00().toDouble(), cave[0, 0], 0.001)
-        assertAreWithinError(joml.m01().toDouble(), cave[0, 1], 0.001)
-        assertAreWithinError(joml.m02().toDouble(), cave[0, 2], 0.001)
-        assertAreWithinError(joml.m03().toDouble(), cave[0, 3], 0.001)
+        assertAreWithinError(joml.m01().toDouble(), cave[1, 0], 0.001)
+        assertAreWithinError(joml.m02().toDouble(), cave[2, 0], 0.001)
+        assertAreWithinError(joml.m03().toDouble(), cave[3, 0], 0.001)
 
-        assertAreWithinError(joml.m10().toDouble(), cave[1, 0], 0.001)
+        assertAreWithinError(joml.m10().toDouble(), cave[0, 1], 0.001)
         assertAreWithinError(joml.m11().toDouble(), cave[1, 1], 0.001)
-        assertAreWithinError(joml.m12().toDouble(), cave[1, 2], 0.001)
-        assertAreWithinError(joml.m13().toDouble(), cave[1, 3], 0.001)
+        assertAreWithinError(joml.m12().toDouble(), cave[2, 1], 0.001)
+        assertAreWithinError(joml.m13().toDouble(), cave[3, 1], 0.001)
 
-        assertAreWithinError(joml.m20().toDouble(), cave[2, 0], 0.001)
-        assertAreWithinError(joml.m21().toDouble(), cave[2, 1], 0.001)
+        assertAreWithinError(joml.m20().toDouble(), cave[0, 2], 0.001)
+        assertAreWithinError(joml.m21().toDouble(), cave[1, 2], 0.001)
         assertAreWithinError(joml.m22().toDouble(), cave[2, 2], 0.001)
-        assertAreWithinError(joml.m23().toDouble(), cave[2, 3], 0.001)
+        assertAreWithinError(joml.m23().toDouble(), cave[3, 2], 0.001)
 
-        assertAreWithinError(joml.m30().toDouble(), cave[3, 0], 0.001)
-        assertAreWithinError(joml.m31().toDouble(), cave[3, 1], 0.001)
-        assertAreWithinError(joml.m32().toDouble(), cave[3, 2], 0.001)
+        assertAreWithinError(joml.m30().toDouble(), cave[0, 3], 0.001)
+        assertAreWithinError(joml.m31().toDouble(), cave[1, 3], 0.001)
+        assertAreWithinError(joml.m32().toDouble(), cave[2, 3], 0.001)
         assertAreWithinError(joml.m33().toDouble(), cave[3, 3], 0.001)
     }
 
@@ -95,6 +96,25 @@ class Matrix4CaveVsJomlTests {
 
         joml.rotate(angle.toFloat(), Vector3f(0f, 0f, 1f))
         cave.applyRotation(angle.radians, 0.0, 0.0, 1.0)
+
+        assertMatricesAreEqual(joml, cave)
+    }
+
+    @Test
+    fun testRotationAndTranslation() {
+        val angle = Math.toRadians(30.0)
+        val translation = vec(1.2, 3.4)
+
+        val cave = Matrix4.identity()
+        val cave2 = Matrix4.identity()
+        val joml = Matrix4f().identity()
+
+        cave.rotation.angle = angle.radians
+        cave2.translation.set(translation)
+        cave *= cave2
+
+        joml.rotate(angle.toFloat(), 0f, 0f, 1f)
+        joml.translate(translation.x.toFloat(), translation.y.toFloat(), 0f)
 
         assertMatricesAreEqual(joml, cave)
     }
