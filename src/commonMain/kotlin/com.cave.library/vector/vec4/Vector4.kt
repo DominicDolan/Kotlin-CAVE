@@ -40,6 +40,8 @@ interface Vector4 : Vector3 {
         }
     }
 
+    operator fun component4() = w
+
     companion object {
         fun create(x: Double, y: Double, z: Double, w: Double) = object : Vector4 {
             override val x: Double = x
@@ -90,6 +92,21 @@ interface VariableVector4 : Vector4, VariableVector3 {
         }
     }
 
+    override fun scale(scale: Double) {
+        this.scaleXYZW(scale)
+    }
+
+    /**
+     * Scale the x, y, z and w components of this vector by the specified value given by [scale]
+     *
+     */
+    fun scaleXYZW(scale: Double) {
+        this.x *= scale
+        this.y *= scale
+        this.z *= scale
+        this.w *= scale
+    }
+
     companion object {
         fun create(x: Double, y: Double, z: Double, w: Double) = object : VariableVector4 {
 
@@ -121,11 +138,3 @@ interface VariableVector4 : Vector4, VariableVector3 {
         fun from(xy: InlineVector, z: Double = 0.0, w: Double = 0.0) = create(xy.x, xy.y, z, w)
     }
 }
-
-operator fun Vector4.component1() = this.x
-operator fun Vector4.component2() = this.y
-operator fun Vector4.component3() = this.z
-operator fun Vector4.component4() = this.w
-
-fun Vector4.dot(x: Double, y: Double, z: Double, w: Double) = this.x*x + this.y*y + this.z*z + this.w*w
-fun Vector4.dot(other: Vector4) = dot(other.x, other.y, other.z, other.w)

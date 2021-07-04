@@ -37,6 +37,8 @@ interface Vector3 : Vector2 {
         }
     }
 
+    operator fun component3() = z
+
     companion object {
         fun create(x: Double, y: Double, z: Double) = object : Vector3 {
 
@@ -90,6 +92,20 @@ interface VariableVector3 : Vector3, VariableVector2 {
         }
     }
 
+    override fun scale(scale: Double) {
+        this.scaleXYZ(scale)
+    }
+
+    /**
+     * Scale the x, y and z components of this vector by the specified value given by [scale]
+     *
+     */
+    fun scaleXYZ(scale: Double) {
+        this.x *= scale
+        this.y *= scale
+        this.z *= scale
+    }
+
     companion object {
         fun create(x: Double, y: Double, z: Double) = object : VariableVector3 {
             override var x: Double = x
@@ -109,10 +125,3 @@ interface VariableVector3 : Vector3, VariableVector2 {
         fun from(xy: InlineVector, z: Double = 0.0) = create(xy.x, xy.y, z)
     }
 }
-
-operator fun Vector3.component1() = this.x
-operator fun Vector3.component2() = this.y
-operator fun Vector3.component3() = this.z
-
-fun Vector3.dot(x: Double, y: Double, z: Double) = this.x*x + this.y*y + this.z*z
-fun Vector3.dot(other: Vector3) = dot(other.x, other.y, other.z)

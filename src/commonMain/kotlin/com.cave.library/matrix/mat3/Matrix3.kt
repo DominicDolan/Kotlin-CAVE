@@ -131,7 +131,7 @@ internal class Matrix3Impl(private val array: DoubleArray, transforms: MatrixArr
     }
 
     override fun timesAssign(other: Matrix3) {
-        array.multiplyIntoArray(this, other)
+        array.product(this, other)
     }
 
     override fun get(row: Int, column: Int): Double {

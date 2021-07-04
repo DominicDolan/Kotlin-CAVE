@@ -2,13 +2,14 @@ package com.cave.library.matrix.mat4
 
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.vector.vec3.VariableVector3
-import com.cave.library.vector.vec4.Vector4
+import com.cave.library.vector.vec3.Vector3
 
 interface MatrixVector3: VariableVector3 {
+    val defaultApply: Vector3
 
-    fun apply(x: Double, y: Double, z: Double): Matrix4
+    fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y, z: Double = defaultApply.z): Matrix4
 
-    fun apply(vector: Vector4) = apply(vector.x, vector.y, vector.z)
+    fun apply(vector: Vector3) = apply(vector.x, vector.y, vector.z)
 
 }
 

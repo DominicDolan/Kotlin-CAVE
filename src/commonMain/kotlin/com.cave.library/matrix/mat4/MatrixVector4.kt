@@ -5,8 +5,9 @@ import com.cave.library.vector.vec4.VariableVector4
 import com.cave.library.vector.vec4.Vector4
 
 interface MatrixVector4: VariableVector4 {
+    val defaultApply: Vector4
 
-    fun apply(x: Double, y: Double, z: Double, w: Double): Matrix4
+    fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y, z: Double = defaultApply.z, w: Double = defaultApply.w): Matrix4
 
     fun apply(vector: Vector4) = apply(vector.x, vector.y, vector.z, vector.w)
 

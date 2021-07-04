@@ -5,9 +5,8 @@ import com.cave.library.angle.Radian
 import com.cave.library.angle.Rotation
 import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat4.Matrix4
+import com.cave.library.vector.dot
 import com.cave.library.vector.vec3.Vector3
-import com.cave.library.vector.vec3.dot
-import com.cave.library.vector.vec4.dot
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -62,8 +61,8 @@ interface MatrixArrayTransforms {
     }
 
     fun DoubleArray.applyTranslation(matrix: Matrix4, x: Double, y: Double, z: Double) {
-        applyMat4RowFunction(this, 3) { column ->
-            matrix.column[column].dot(x, y, z, 1.0)
+        applyMat4ColumnFunction(this, 3) { row ->
+            matrix.row[row].dot(x, y, z, 1.0)
         }
     }
 
@@ -127,11 +126,11 @@ interface MatrixArrayTransforms {
         this[3, 2] = -1.0
     }
 
-    fun DoubleArray.multiplyIntoArray(matLeft: Matrix3, matRight: Matrix3) {
+    fun DoubleArray.product(matLeft: Matrix3, matRight: Matrix3) {
         applyMat3Function(this) { row, column -> matLeft.row[row].dot(matRight.column[column]) }
     }
 
-    fun DoubleArray.multiplyIntoArray(matLeft: Matrix4, matRight: Matrix4) {
+    fun DoubleArray.product(matLeft: Matrix4, matRight: Matrix4) {
         applyMat4Function(this) { row, column -> matLeft.row[row].dot(matRight.column[column]) }
     }
 
@@ -196,6 +195,18 @@ inline fun MatrixArrayTransforms.applyMat4RowFunction(array: DoubleArray, row: I
     array[row, 1] = col1
     array[row, 2] = col2
     array[row, 3] = col3
+}
+
+inline fun MatrixArrayTransforms.applyMat4ColumnFunction(array: DoubleArray, column: Int, operation: (row: Int) -> Double) {
+    val row0 = operation(0)
+    val row1 = operation(1)
+    val row2 = operation(2)
+    val row3 = operation(3)
+
+    array[0, column] = row0
+    array[1, column] = row1
+    array[2, column] = row2
+    array[3, column] = row3
 }
 
 inline fun MatrixArrayTransforms.applyMat3Function(array: DoubleArray, operation: (row: Int, column: Int) -> Double) {

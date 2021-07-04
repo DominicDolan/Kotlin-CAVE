@@ -26,6 +26,9 @@ interface Vector2 {
         return if (i == 0) x else if (i == 1) y else 0.0
     }
 
+    operator fun component1() = x
+    operator fun component2() = y
+
     companion object {
         fun create(x: Double, y: Double) = object : Vector2 {
             override val r: Double = super.r
@@ -64,6 +67,21 @@ interface VariableVector2 : Vector2 {
         }
     }
 
+    /**
+     * Scale all components of this vector by the specified value given by [scale]
+     *
+     */
+    fun scale(scale: Double) = scaleXY(scale)
+
+    /**
+     * Scale the x and y components of this vector by the specified value given by [scale]
+     *
+     */
+    fun scaleXY(scale: Double) {
+        this.x *= scale
+        this.y *= scale
+    }
+
     companion object {
         fun create(x: Double, y: Double) = object : VariableVector2 {
 
@@ -87,29 +105,3 @@ interface VariableVector2 : Vector2 {
     }
 }
 
-operator fun Vector2.component1() = this.x
-operator fun Vector2.component2() = this.y
-
-operator fun VariableVector2.plusAssign(vector: Vector2) {
-    this.x += vector.x
-    this.y += vector.y
-}
-
-operator fun VariableVector2.minusAssign(vector: Vector2) {
-    this.x -= vector.x
-    this.y -= vector.y
-}
-
-operator fun VariableVector2.timesAssign(scale: Double) {
-    this.x *= scale
-    this.y *= scale
-}
-
-operator fun VariableVector2.divAssign(scale: Double) {
-    this.x /= scale
-    this.y /= scale
-}
-
-fun Vector2.distanceTo(other: Vector2): Double {
-    return (vec(this) - vec(other)).r
-}

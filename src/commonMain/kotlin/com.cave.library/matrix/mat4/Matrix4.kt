@@ -5,16 +5,17 @@ import com.cave.library.angle.Radian
 import com.cave.library.angle.VariableRotation
 import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
-import com.cave.library.matrix.mat3.IndexedMatrixVariableVector3
 import com.cave.library.matrix.mat3.RotationVariableImpl
-import com.cave.library.vector.vec2.timesAssign
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.tools.hypot
+import com.cave.library.vector.timesAssign
+import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
+import com.cave.library.vector.vec4.Vector4
 
 interface Matrix4 {
 
-    val translation: VariableVector3
-    val scale: VariableVector3
+    val translation: MatrixVector3
+    val scale: MatrixVector3
     val rotation: VariableRotation
 
     val column: Columns
@@ -110,35 +111,61 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
     }
 
     override fun timesAssign(other: Matrix4) {
-        array.multiplyIntoArray(this, other)
+        array.product(this, other)
     }
 
     override fun get(row: Int, column: Int) = array[row, column]
 
-    override val translation: VariableVector3 by lazy {
-        val xIndex = coordsToIndex(3, 0)
-        val yIndex = coordsToIndex(3, 1)
-        val zIndex = coordsToIndex(3, 2)
-        IndexedMatrixVariableVector3(array, xIndex, yIndex, zIndex)
+    override val translation: MatrixVector3 by lazy {
+        object : MatrixVector3 {
+            override val defaultApply = Vector3.create(0.0, 0.0, 0.0)
+
+            override fun apply(x: Double, y: Double, z: Double): Matrix4 {
+                array.applyTranslation(this@Matrix4Impl, x, y, z)
+                return this@Matrix4Impl
+            }
+
+            override var x: Double
+                get() = array[0, 3]
+                set(value) { array[0, 3] = value }
+            override var y: Double
+                get() = array[1, 3]
+                set(value) { array[1, 3] = value }
+            override var z: Double
+                get() = array[2, 3]
+                set(value) { array[2, 3] = value }
+
+        }
     }
 
-    override val scale: VariableVector3 by lazy { object : VariableVector3 {
-        override var x: Double
-            get() = array[0, 0]
-            set(value) {
-                row[0] *= value
+    override val scale: MatrixVector3 by lazy {
+        object : MatrixVector3 {
+            override val defaultApply = Vector3.create(1.0, 1.0, 1.0)
+
+            override fun apply(x: Double, y: Double, z: Double): Matrix4 {
+                column[0] *= x
+                column[1] *= y
+                column[2] *= z
+                return this@Matrix4Impl
             }
-        override var y: Double
-            get() = array[1, 1]
-            set(value) {
-                row[1] *= value
-            }
-        override var z: Double
-            get() = array[2, 2]
-            set(value) {
-                row[2] *= value
-            }
-    } }
+
+            override var x: Double
+                get() = hypot(column[0] as Vector3)
+                set(value) {
+                    array[0, 0] = value
+                }
+            override var y: Double
+                get() = hypot(column[1] as Vector3)
+                set(value) {
+                    array[1, 1] = value
+                }
+            override var z: Double
+                get() = hypot(column[2] as Vector3)
+                set(value) {
+                    array[2, 2] = value
+                }
+        }
+    }
 
     override val rotation: VariableRotation = RotationVariableImpl(array, 0.0.radians, 0.0, 0.0, 1.0, this)
 
@@ -180,6 +207,9 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
                 get() = array[it, 3]
                 set(value) { array[it, 3] = value }
 
+            override fun toString(): String {
+                return Vector4.toString(this)
+            }
         } }
 
         override fun get(row: Int) = rows[row]
