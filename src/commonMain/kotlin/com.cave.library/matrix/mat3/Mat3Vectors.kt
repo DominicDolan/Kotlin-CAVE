@@ -13,7 +13,7 @@ abstract class MatrixVector3(
     protected val xGetter: MatrixArrayTransforms.(DoubleArray) -> Double,
     protected val yGetter: MatrixArrayTransforms.(DoubleArray) -> Double,
     protected val zGetter: MatrixArrayTransforms.(DoubleArray) -> Double,
-    private val transforms: MatrixArrayTransforms = StaticMatrix3
+    private val transforms: MatrixArrayTransforms = Matrix3
 ) : Vector3 {
 
     private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }

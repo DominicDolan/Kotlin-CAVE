@@ -34,7 +34,7 @@ abstract class Matrix4Creator<M> : Matrix3Creator<M>() {
         return create(array)
     }
 
-    open fun from(matrix4: StaticMatrix4): M {
+    open fun from(matrix4: Matrix4): M {
         val array = DoubleArray(arraySize)
         matrix4.fill(array)
         return create(array)

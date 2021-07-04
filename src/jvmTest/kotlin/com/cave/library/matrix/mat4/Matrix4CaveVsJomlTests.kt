@@ -6,11 +6,13 @@ import com.cave.library.matrix.joml.toDoubleArray
 import com.cave.library.testUtils.areWithinError
 import com.cave.library.testUtils.contentEquals
 import com.cave.library.testUtils.createIdentifyableMatrix4DoubleArray
+import com.cave.library.testUtils.findUnequal
 import com.cave.library.vector.vec2.vec
 import com.cave.library.vector.vec4.dot
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.junit.Test
+import kotlin.test.fail
 
 class Matrix4CaveVsJomlTests {
     @Test
@@ -101,7 +103,24 @@ class Matrix4CaveVsJomlTests {
     }
 
     @Test
-    fun testRotationAndTranslation() {
+    fun testRotationThenApplyTranslation() {
+        val angle = Math.toRadians(30.0)
+        val translation = vec(1.2, 3.4)
+
+        val cave = Matrix4.identity()
+        val joml = Matrix4f().identity()
+
+        cave.rotation.angle = angle.radians
+        cave.translation.set(translation)
+
+        joml.rotate(angle.toFloat(), 0f, 0f, 1f)
+        joml.translate(translation.x.toFloat(), translation.y.toFloat(), 0f)
+
+        assertMatricesAreEqual(joml, cave)
+    }
+
+    @Test
+    fun testTranslationThenApplyRotation() {
         val angle = Math.toRadians(30.0)
         val translation = vec(1.2, 3.4)
 
@@ -159,9 +178,14 @@ class Matrix4CaveVsJomlTests {
         val actual = joml.toDoubleArray()
         val expected = cave.toDoubleArray()
 
-        assert(actual.contentEquals(expected, 0.01)) {
-            "expected: ${expected.contentToString()}\n" +
-            "actual:   ${actual.contentToString()}\n"
+        if (!actual.contentEquals(expected, 0.01)) {
+            val failIndex = actual.findUnequal(expected, 0.01)
+            fail("""
+                expected (JOML): ${expected.contentToString()}
+                actual (CAVE):   ${actual.contentToString()}
+                Failed at: actual[$failIndex] = ${actual[failIndex]}, expected[$failIndex] = ${expected[failIndex]}
+                
+            """.trimIndent())
         }
     }
 

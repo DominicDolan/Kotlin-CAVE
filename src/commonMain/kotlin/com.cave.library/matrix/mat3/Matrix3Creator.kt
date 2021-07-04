@@ -1,5 +1,7 @@
 package com.cave.library.matrix.mat3
 
+import com.cave.library.angle.Angle
+import com.cave.library.angle.Rotation
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
@@ -12,7 +14,7 @@ abstract class Matrix3Creator<M> : MatrixArrayTransforms {
         return create(arr)
     }
 
-    open fun from(matrix3: StaticMatrix3): M {
+    open fun from(matrix3: Matrix3): M {
         val array = DoubleArray(arraySize)
         matrix3.fill(array)
         return create(array)
@@ -44,4 +46,16 @@ abstract class Matrix3Creator<M> : MatrixArrayTransforms {
     open fun scaled(vector: Vector2, z: Double = 0.0): M {
         return scaled(vector.x, vector.y, z)
     }
+
+
+    fun rotated(angle: Angle, x: Double, y: Double, z: Double): M {
+        val array = DoubleArray(arraySize)
+        val rotation = Rotation.create(angle, x, y, z)
+
+        array.identity()
+        array.rotate(rotation)
+
+        return create(array)
+    }
+
 }

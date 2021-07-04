@@ -1,14 +1,5 @@
 package com.cave.library.matrix
 
-import com.cave.library.angle.Degree
-import com.cave.library.angle.Radian
-import com.cave.library.angle.Rotation
-import com.cave.library.matrix.mat3.StaticMatrix3
-import com.cave.library.vector.vec3.Vector3
-import com.cave.library.vector.vec3.dot
-import kotlin.math.cos
-import kotlin.math.sin
-
 
 fun Double.formatted(characterLength: Int = 6): String {
     val str = this.toString()

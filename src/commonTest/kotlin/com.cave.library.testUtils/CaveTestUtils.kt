@@ -21,10 +21,14 @@ fun FloatArray.toDoubleArray(): DoubleArray {
 }
 
 fun DoubleArray.contentEquals(other: DoubleArray, error: Double): Boolean {
+    return findUnequal(other, error) == -1
+}
+
+fun DoubleArray.findUnequal(other: DoubleArray, error: Double): Int {
     for (i in this.indices) {
         if (!areWithinError(this[i], other[i], error)) {
-            return false
+            return i
         }
     }
-    return true
+    return -1
 }

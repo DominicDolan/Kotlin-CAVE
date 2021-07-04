@@ -11,15 +11,17 @@ import com.cave.library.vector.vec2.timesAssign
 import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec4.VariableVector4
 
-interface Matrix4 : StaticMatrix4 {
+interface Matrix4 {
 
-    override val translation: VariableVector3
-    override val scale: VariableVector3
-    override val rotation: VariableRotation
+    val translation: VariableVector3
+    val scale: VariableVector3
+    val rotation: VariableRotation
 
-    override val column: StaticMatrix4.Column
-    override val row: StaticMatrix4.Row
-
+    val column: Columns
+    val row: Rows
+    
+    fun fill(array: DoubleArray)
+    fun fill(array: FloatArray)
 
     fun identity(): Matrix4
     fun normal(): Matrix4
@@ -31,32 +33,20 @@ interface Matrix4 : StaticMatrix4 {
     fun perspective(fov: Radian, aspectRatio: Double, near: Double = 0.0, far: Double = Double.POSITIVE_INFINITY): Matrix4
 
     operator fun set(row: Int, column: Int, value: Double)
+    operator fun get(row: Int, column: Int): Double
 
-    fun set(other: StaticMatrix4)
+    fun set(other: Matrix4)
 
-    operator fun timesAssign(other: StaticMatrix4)
+    operator fun timesAssign(other: Matrix4)
 
-    interface Column : StaticMatrix4.Column {
-        override fun get(column: Int): VariableVector4
-        operator fun set(row: Int, column: Int, value: Double)
+    interface Columns {
+        operator fun get(column: Int): VariableVector4
         operator fun set(column: Int, value: VariableVector4)
-
-        companion object {
-            fun create(array: DoubleArray): Column {
-                return VariableColumnImpl(array)
-            }
-        }
     }
-    interface Row : StaticMatrix4.Row {
-        override fun get(row: Int): VariableVector4
-        operator fun set(row: Int, column: Int, value: Double)
-        operator fun set(row: Int, value: VariableVector4)
 
-        companion object {
-            fun create(array: DoubleArray): Row {
-                return VariableRowImpl(array)
-            }
-        }
+    interface Rows {
+        operator fun get(row: Int): VariableVector4
+        operator fun set(row: Int, value: VariableVector4)
     }
 
     companion object : Matrix4Creator<Matrix4>() {
@@ -65,10 +55,17 @@ interface Matrix4 : StaticMatrix4 {
 
         override fun create(array: DoubleArray): Matrix4 = Matrix4Impl(array)
 
+        fun toString(matrix: Matrix4): String {
+            return matrix.row[0].toString() + '\n' +
+                    matrix.row[1].toString() + '\n' +
+                    matrix.row[2].toString() + '\n' +
+                    matrix.row[3].toString() + '\n'
+        }
+
     }
 }
 
-private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixArrayTransforms {
+private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransforms {
     override val columnCount: Int = 4
     override val rowCount: Int = 4
 
@@ -104,7 +101,7 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixArray
         return this
     }
 
-    override fun set(other: StaticMatrix4) {
+    override fun set(other: Matrix4) {
         other.fill(array)
     }
 
@@ -112,7 +109,7 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixArray
         array[row, column] = value
     }
 
-    override fun timesAssign(other: StaticMatrix4) {
+    override fun timesAssign(other: Matrix4) {
         array.multiplyIntoArray(this, other)
     }
 
@@ -144,8 +141,52 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixArray
     } }
 
     override val rotation: VariableRotation = RotationVariableImpl(array, 0.0.radians, 0.0, 0.0, 1.0, this)
-    override val column: Matrix4.Column = Matrix4.Column.create(array)
-    override val row: Matrix4.Row = Matrix4.Row.create(array)
+
+    override val column: Matrix4.Columns  = object : Matrix4.Columns {
+        private val columns = Array<VariableVector4>(4) { object : VariableVector4 {
+            override var x: Double
+                get() = array[0, it]
+                set(value) { array[0, it] = value}
+            override var y: Double
+                get() = array[1, it]
+                set(value) { array[1, it] = value}
+            override var z: Double
+                get() = array[2, it]
+                set(value) {array[2, it] = value}
+            override var w: Double
+                get() = array[3, it]
+                set(value) { array[3, it] = value }
+
+        } }
+
+        override fun get(column: Int) = columns[column]
+        override fun set(column: Int, value: VariableVector4) {
+            columns[column].set(value)
+        }
+    }
+    
+    override val row: Matrix4.Rows = object : Matrix4.Rows {
+        private val rows = Array<VariableVector4>(4) { object : VariableVector4 {
+            override var x: Double
+                get() = array[it, 0]
+                set(value) { array[it, 0] = value}
+            override var y: Double
+                get() = array[it, 1]
+                set(value) { array[it, 1] = value}
+            override var z: Double
+                get() = array[it, 2]
+                set(value) {array[it, 2] = value}
+            override var w: Double
+                get() = array[it, 3]
+                set(value) { array[it, 3] = value }
+
+        } }
+
+        override fun get(row: Int) = rows[row]
+        override fun set(row: Int, value: VariableVector4) {
+            rows[row].set(value)
+        }
+    }
 
     override fun fill(array: DoubleArray) {
         this.array.copyInto(array)
@@ -164,40 +205,3 @@ private class Matrix4Impl(private val array: DoubleArray) : Matrix4, MatrixArray
 
 }
 
-private class VariableColumnImpl(private val array: DoubleArray)
-    : Matrix4.Column, MatrixArrayTransforms by Matrix4 {
-    private val columns = Array<VariableVector4>(4) { ColumnVariableVector4(it, array, Matrix4) }
-
-    override fun set(row: Int, column: Int, value: Double) {
-        array[row, column] = value
-    }
-
-    override fun set(column: Int, value: VariableVector4) {
-        columns[column].set(value)
-    }
-
-    override fun get(row: Int, column: Int) = array[row, column]
-
-    override fun get(column: Int): VariableVector4 {
-        return columns[column]
-    }
-}
-
-private class VariableRowImpl(private val array: DoubleArray)
-    : Matrix4.Row, MatrixArrayTransforms by Matrix4 {
-    private val rows = Array<VariableVector4>(4) { RowVariableVector4(it, array, Matrix4) }
-
-    override fun set(row: Int, column: Int, value: Double) {
-        array[row, column] = value
-    }
-
-    override fun set(row: Int, value: VariableVector4) {
-        rows[row].set(value)
-    }
-
-    override fun get(row: Int, column: Int) = array[row, column]
-
-    override fun get(row: Int): VariableVector4 {
-        return rows[row]
-    }
-}

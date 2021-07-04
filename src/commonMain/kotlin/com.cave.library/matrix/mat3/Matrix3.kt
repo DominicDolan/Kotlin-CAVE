@@ -11,10 +11,17 @@ import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.Vector4
 
-interface Matrix3 : StaticMatrix3 {
+interface Matrix3 {
+    operator fun get(row: Int, column: Int): Double
 
-    override val scale: VariableVector3
-    override val rotation: VariableRotation
+    val column: Column
+    val row: Row
+
+    fun fill(array: DoubleArray)
+    fun fill(array: FloatArray)
+
+    val scale: VariableVector3
+    val rotation: VariableRotation
 
     fun identity(): Matrix3
     fun normal(): Matrix3
@@ -23,12 +30,13 @@ interface Matrix3 : StaticMatrix3 {
     fun zero(): Matrix3
 
     operator fun set(row: Int, column: Int, value: Double)
-    fun set(other: StaticMatrix3)
+    fun set(other: Matrix3)
 
-    operator fun timesAssign(other: StaticMatrix3)
+    operator fun timesAssign(other: Matrix3)
 
-    interface Column : StaticMatrix3.Column {
-        override fun get(column: Int): ColumnVariableVector3
+    interface Column {
+        operator fun get(row: Int, column: Int): Double
+        operator fun get(column: Int): ColumnVariableVector3
         operator fun set(row: Int, column: Int, value: Double)
         operator fun set(column: Int, value: Vector4)
 
@@ -53,8 +61,9 @@ interface Matrix3 : StaticMatrix3 {
         }
     }
 
-    interface Row : StaticMatrix3.Row {
-        override fun get(row: Int): RowVariableVector3
+    interface Row {
+        operator fun get(row: Int, column: Int): Double
+        operator fun get(row: Int): RowVariableVector3
         operator fun set(row: Int, column: Int, value: Double)
         operator fun set(row: Int, value: Vector4)
 
@@ -117,11 +126,11 @@ internal class Matrix3Impl(private val array: DoubleArray, transforms: MatrixArr
         array[row, column] = value
     }
 
-    override fun set(other: StaticMatrix3) {
+    override fun set(other: Matrix3) {
         other.fill(array)
     }
 
-    override fun timesAssign(other: StaticMatrix3) {
+    override fun timesAssign(other: Matrix3) {
         array.multiplyIntoArray(this, other)
     }
 
