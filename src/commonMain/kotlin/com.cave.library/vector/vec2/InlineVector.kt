@@ -43,9 +43,6 @@ fun vec(r: Number, theta: Radian): InlineVector {
 
 fun vec(vector: Vector2) = vec(vector.x, vector.y)
 
-operator fun InlineVector.component1() = this.x
-operator fun InlineVector.component2() = this.y
-
 operator fun InlineVector.plus(other: InlineVector) : InlineVector {
     return vec(this.x.toFloat() + other.x.toFloat(), this.y.toFloat() + other.y.toFloat())
 }

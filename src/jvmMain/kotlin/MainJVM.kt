@@ -2,8 +2,6 @@ import com.cave.library.angle.degrees
 import com.cave.library.angle.plus
 import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat4.Matrix4
-import com.cave.library.matrix.mat4.applyScale
-import com.cave.library.matrix.mat4.applyTranslation
 import org.joml.Matrix4f
 
 fun main() {
@@ -46,8 +44,8 @@ fun testStaticRotation() {
 
 fun testMultiplication() {
     val m1 = Matrix4.identity()
-        .applyTranslation(1.0, 2.0, 0.0)
-        .applyScale(1.0, 2.0, 1.0)
+        .translation.apply(1.0, 2.0, 0.0)
+        .scale.apply(1.0, 2.0)
 
     println("CAVE:")
     val m2 = Matrix4.identity()

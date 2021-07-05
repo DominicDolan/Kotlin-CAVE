@@ -1,16 +1,17 @@
+@file:Suppress("DuplicatedCode") // Duplicate code needs to be used a lot in this file for the purposes of efficiency
+
 package com.cave.library.matrix
 
 import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
 import com.cave.library.angle.Rotation
+import com.cave.library.angle.radians
 import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat4.Matrix4
+import com.cave.library.tools.safeAcos
 import com.cave.library.vector.dot
 import com.cave.library.vector.vec3.Vector3
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
-import kotlin.math.tan
+import kotlin.math.*
 
 interface MatrixArrayTransforms {
     val columnCount: Int
@@ -18,6 +19,19 @@ interface MatrixArrayTransforms {
 
     val arraySize: Int
         get() = columnCount*rowCount
+
+    val DoubleArray.angle: Radian
+        get() {
+            val trace = this[0, 0] + this[1, 1] + this[2, 2]
+            val angle = safeAcos((trace - 1.0) / 2.0)
+
+            val axisX = this[1, 2] - this[2, 1]
+            val axisY = this[2, 0] - this[0, 2]
+            val axisZ = this[0, 1] - this[1, 0]
+
+            return if (axisX >= 0 && axisY >= 0 && axisZ >=0) angle.radians
+            else (2* PI - angle).radians
+        }
 
     fun coordsToIndex(row: Int, column: Int): Int {
         return row*rowCount + column
@@ -86,6 +100,41 @@ interface MatrixArrayTransforms {
 
     fun DoubleArray.rotate(rotation: Rotation) {
         this.rotate(rotation.angle, rotation.axis.x, rotation.axis.y, rotation.axis.z)
+    }
+    
+    fun DoubleArray.applyRotation(angle: Radian, x: Double, y: Double, z: Double) {
+        val sin = sin(angle.toDouble())
+        val cos = cos(angle.toDouble())
+
+        val versin = 1.0 - cos
+
+        val xy = x * y * versin
+        val xz = x * z * versin
+        val yz = y * z * versin
+
+        val m00 = (cos + x * x * versin); val m01 = (xy - z * sin);         val m02 = (xz + y * sin)
+        val m10 = (xy + z * sin);         val m11 = (cos + y * y * versin); val m12 = (yz - x * sin)
+        val m20 = (xz - y * sin);         val m21 = (yz + x * sin);         val m22 = (cos + z * z * versin)
+
+        val dot00 = this[0, 0] * m00 + this[0, 1] * m10 + this[0, 2] * m20
+        val dot10 = this[1, 0] * m00 + this[1, 1] * m10 + this[1, 2] * m20
+        val dot20 = this[2, 0] * m00 + this[2, 1] * m10 + this[2, 2] * m20
+        val dot30 = this[3, 0] * m00 + this[3, 1] * m10 + this[3, 2] * m20
+
+        val dot01 = this[0, 0] * m01 + this[0, 1] * m11 + this[0, 2] * m21
+        val dot11 = this[1, 0] * m01 + this[1, 1] * m11 + this[1, 2] * m21
+        val dot21 = this[2, 0] * m01 + this[2, 1] * m11 + this[2, 2] * m21
+        val dot31 = this[3, 0] * m01 + this[3, 1] * m11 + this[3, 2] * m21
+
+        val dot02 = this[0, 0] * m02 + this[0, 1] * m12 + this[0, 2] * m22
+        val dot12 = this[1, 0] * m02 + this[1, 1] * m12 + this[1, 2] * m22
+        val dot22 = this[2, 0] * m02 + this[2, 1] * m12 + this[2, 2] * m22
+        val dot32 = this[3, 0] * m02 + this[3, 1] * m12 + this[3, 2] * m22
+
+        this[0, 0] = dot00;  this[0, 1] = dot01;  this[0, 2] = dot02
+        this[1, 0] = dot10;  this[1, 1] = dot11;  this[1, 2] = dot12
+        this[2, 0] = dot20;  this[2, 1] = dot21;  this[2, 2] = dot22
+        this[3, 0] = dot30;  this[3, 1] = dot31;  this[3, 2] = dot32
     }
 
     private fun DoubleArray.rotate(radians: Double, x: Double, y: Double, z: Double) {

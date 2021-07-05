@@ -154,46 +154,42 @@ class Matrix4CaveVsJomlTests {
         val joml = Matrix4f().identity()
 
         joml.rotate(angle.toFloat(), Vector3f(0f, 0f, 1f))
-        cave.applyRotation(angle.radians, 0.0, 0.0, 1.0)
+        cave.rotation.apply(angle.radians, 0.0, 0.0, 1.0)
 
         assertMatricesAreEqual(joml, cave)
     }
 
-//    @Test
-//    fun testRotationThenApplyTranslation() {
-//        val angle = Math.toRadians(30.0)
-//        val translation = vec(1.2, 3.4)
-//
-//        val cave = Matrix4.identity()
-//        val joml = Matrix4f().identity()
-//
-//        cave.rotation.angle = angle.radians
-//        cave.translation.set(translation)
-//
-//        joml.rotate(angle.toFloat(), 0f, 0f, 1f)
-//        joml.translate(translation.x.toFloat(), translation.y.toFloat(), 0f)
-//
-//        assertMatricesAreEqual(joml, cave)
-//    }
+    @Test
+    fun testRotationThenApplyTranslation() {
+        val angle = Math.toRadians(30.0)
 
-//    @Test
-//    fun testTranslationThenApplyRotation() {
-//        val angle = Math.toRadians(30.0)
-//        val translation = vec(1.2, 3.4)
-//
-//        val cave = Matrix4.identity()
-//        val cave2 = Matrix4.identity()
-//        val joml = Matrix4f().identity()
-//
-//        cave.rotation.angle = angle.radians
-//        cave2.translation.set(translation)
-//        cave *= cave2
-//
-//        joml.rotate(angle.toFloat(), 0f, 0f, 1f)
-//        joml.translate(translation.x.toFloat(), translation.y.toFloat(), 0f)
-//
-//        assertMatricesAreEqual(joml, cave)
-//    }
+        val cave = Matrix4.identity()
+        val joml = Matrix4f().identity()
+
+        cave.rotation.set(angle.radians, 0.0, 0.0, 1.0)
+        cave.translation.apply(1.2, 3.4)
+
+        joml.rotation(angle.toFloat(), 0f, 0f, 1f)
+        joml.translate(1.2f, 3.4f, 0f)
+
+        assertMatricesAreEqual(joml, cave)
+    }
+
+    @Test
+    fun testTranslationThenApplyRotation() {
+        val angle = Math.toRadians(30.0)
+
+        val cave = Matrix4.identity()
+        val joml = Matrix4f().identity()
+
+        cave.translation.set(1.2, 3.4)
+        cave.rotation.apply(angle.radians)
+
+        joml.translate(1.2f, 3.4f, 0f)
+        joml.rotate(angle.toFloat(), 0f, 0f, 1f)
+
+        assertMatricesAreEqual(joml, cave)
+    }
 
     private fun getJomlProduct(): Matrix4f {
         val jomlM1 = createMatrix4f(createIdentifyableMatrix4DoubleArray())

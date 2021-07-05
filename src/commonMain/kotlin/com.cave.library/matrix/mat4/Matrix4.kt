@@ -2,21 +2,20 @@ package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
-import com.cave.library.angle.VariableRotation
-import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
-import com.cave.library.matrix.mat3.RotationVariableImpl
 import com.cave.library.tools.hypot
 import com.cave.library.vector.timesAssign
+import com.cave.library.vector.vec3.VariableVector3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
 import com.cave.library.vector.vec4.Vector4
+import kotlin.math.abs
 
 interface Matrix4 {
 
     val translation: MatrixVector3
     val scale: MatrixVector3
-    val rotation: VariableRotation
+    val rotation: MatrixRotationVector
 
     val column: Columns
     val row: Rows
@@ -167,7 +166,87 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
         }
     }
 
-    override val rotation: VariableRotation = RotationVariableImpl(array, 0.0.radians, 0.0, 0.0, 1.0, this)
+    override val rotation: MatrixRotationVector = object : MatrixRotationVector {
+
+        override var angle: Radian
+            get() = array.angle
+            set(value) {
+                array.rotate(value, axis.x, axis.y, axis.z)
+            }
+
+        override fun set(angle: Radian, x: Double, y: Double, z: Double) {
+            array.rotate(angle, x, y, z)
+        }
+
+        // TODO: Theses apply functions could be made more efficient
+        override fun apply(angle: Radian, x: Double, y: Double, z: Double): Matrix4 {
+            array.applyRotation(angle.toRadians(), x, y, z)
+            return this@Matrix4Impl
+        }
+
+        override fun apply(angle: Degree, x: Double, y: Double, z: Double) = apply(angle.toRadians(), x, y, z)
+
+        override fun apply(angle: Radian) = apply(angle, axis.x, axis.y, axis.z)
+
+        override fun apply(angle: Degree) = apply(angle.toRadians())
+
+        private val defaultAxis = object : VariableVector3 {
+            override var x: Double = 0.0
+            override var y: Double = 0.0
+            override var z: Double = 1.0
+        }
+
+        private val fullAxis = object : Vector3 {
+            override val x: Double
+                get() = abs(array[1, 2] - array[2, 1])
+            override val y: Double
+                get() = abs(array[2, 0] - array[0, 2])
+            override val z: Double
+                get() = abs(array[0, 1] - array[1, 0])
+        }
+
+        override val axis: VariableVector3 = object : VariableVector3 {
+            override var x: Double
+                get() = getAxisComponent(fullAxis.x, defaultAxis.x)
+                set(value) {
+                    defaultAxis.x = value
+                    array.rotate(angle, value, y, z)
+                }
+            override var y: Double
+                get() = getAxisComponent(fullAxis.y, defaultAxis.y)
+                set(value) {
+                    defaultAxis.y = value
+                    array.rotate(angle, x, value, z)
+                }
+            override var z: Double
+                get() = getAxisComponent(fullAxis.z, defaultAxis.z)
+                set(value) {
+                    defaultAxis.z = value
+                    array.rotate(angle, x, y, value)
+                }
+
+            override fun set(x: Double, y: Double, z: Double) {
+                defaultAxis.set(x, y, z)
+                array.rotate(angle, x, y, z)
+            }
+
+            override fun set(x: Double, y: Double) {
+                defaultAxis.set(x, y, 0.0)
+                array.rotate(angle, x, y, z)
+            }
+
+            override fun toString() = Vector3.toString(this)
+
+            private fun getAxisComponent(component: Double, default: Double): Double {
+                val (x, y, z) = fullAxis
+                val r2 = x*x + y*y + z*z
+                return if (r2 < 1.0E-6 || !r.isFinite()) default
+                       else component/r
+
+            }
+
+        }
+    }
 
     override val column: Matrix4.Columns  = object : Matrix4.Columns {
         private val columns = Array<VariableVector4>(4) { object : VariableVector4 {
