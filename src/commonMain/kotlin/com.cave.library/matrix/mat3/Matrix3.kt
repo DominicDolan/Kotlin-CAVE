@@ -88,7 +88,7 @@ interface Matrix3 {
         }
     }
 
-    companion object : Matrix3Creator<Matrix3>() {
+    companion object : Matrix3Factory<Matrix3>() {
         override val columnCount: Int = 3
         override val rowCount: Int = 3
 

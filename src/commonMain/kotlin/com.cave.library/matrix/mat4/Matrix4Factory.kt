@@ -1,11 +1,11 @@
 package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.Angle
-import com.cave.library.matrix.mat3.Matrix3Creator
+import com.cave.library.matrix.mat3.Matrix3Factory
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
-abstract class Matrix4Creator<M> : Matrix3Creator<M>() {
+abstract class Matrix4Factory<M> : Matrix3Factory<M>() {
 
     fun translation(x: Double, y: Double, z: Double): M {
         val array = DoubleArray(arraySize)

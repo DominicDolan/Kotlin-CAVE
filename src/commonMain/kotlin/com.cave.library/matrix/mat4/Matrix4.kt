@@ -49,7 +49,7 @@ interface Matrix4 {
         operator fun set(row: Int, value: VariableVector4)
     }
 
-    companion object : Matrix4Creator<Matrix4>() {
+    companion object : Matrix4Factory<Matrix4>() {
         override val columnCount: Int = 4
         override val rowCount: Int = 4
 

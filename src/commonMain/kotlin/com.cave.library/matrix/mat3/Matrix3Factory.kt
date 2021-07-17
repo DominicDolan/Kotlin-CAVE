@@ -6,7 +6,7 @@ import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.vector.vec2.Vector2
 import com.cave.library.vector.vec3.Vector3
 
-abstract class Matrix3Creator<M> : MatrixArrayTransforms {
+abstract class Matrix3Factory<M> : MatrixArrayTransforms {
     protected abstract fun create(array: DoubleArray): M
 
     open fun from(array: DoubleArray): M {

@@ -3,8 +3,20 @@ package com.cave.library.matrix.mat4
 import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
 import com.cave.library.angle.VariableRotation
+import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
 import com.cave.library.vector.vec4.Vector4
+
+
+interface MatrixVector3: VariableVector3 {
+    val defaultApply: Vector3
+
+    fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y, z: Double = defaultApply.z): Matrix4
+
+    fun apply(vector: Vector3) = apply(vector.x, vector.y, vector.z)
+
+}
 
 interface MatrixVector4: VariableVector4 {
     val defaultApply: Vector4
@@ -12,7 +24,6 @@ interface MatrixVector4: VariableVector4 {
     fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y, z: Double = defaultApply.z, w: Double = defaultApply.w): Matrix4
 
     fun apply(vector: Vector4) = apply(vector.x, vector.y, vector.z, vector.w)
-
 }
 
 interface MatrixRotationVector : VariableRotation {
