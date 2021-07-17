@@ -2,6 +2,7 @@ package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.Degree
 import com.cave.library.angle.Radian
+import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.tools.hypot
 import com.cave.library.vector.timesAssign
@@ -10,12 +11,15 @@ import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
 import com.cave.library.vector.vec4.Vector4
 import kotlin.math.abs
+import kotlin.math.atan
+import kotlin.math.tan
 
 interface Matrix4 {
 
     val translation: MatrixVector3
     val scale: MatrixVector3
     val rotation: MatrixRotationVector
+    val skew: MatrixAngleVector2
 
     val column: Columns
     val row: Rows
@@ -246,6 +250,25 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
             }
 
         }
+    }
+
+    override val skew: MatrixAngleVector2 = object : MatrixAngleVector2 {
+        override fun apply(x: Radian, y: Radian): Matrix4 {
+            array.applySkew(this@Matrix4Impl, x, y)
+            return this@Matrix4Impl
+        }
+
+        override var x: Radian
+            get() = (-atan(array[0, 1])).radians
+            set(value) {
+                array[0, 1] = tan(-(value.toDouble()))
+            }
+        override var y: Radian
+            get() = atan(array[1, 0]).radians
+            set(value) {
+                array[1, 0] = tan(value.toDouble())
+            }
+
     }
 
     override val column: Matrix4.Columns  = object : Matrix4.Columns {

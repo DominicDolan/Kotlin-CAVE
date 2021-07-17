@@ -61,8 +61,8 @@ interface VariableVector2 : Vector2 {
 
     operator fun set(component: Int, value: Double) {
         when(component) {
-            0 -> x
-            1 -> y
+            0 -> x = value
+            1 -> y = value
             else -> throw Exception("OutOfBoundsException: Tried to set 3rd coordinate on a 2D vector")
         }
     }

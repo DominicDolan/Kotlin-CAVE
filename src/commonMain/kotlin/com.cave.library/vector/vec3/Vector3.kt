@@ -85,9 +85,9 @@ interface VariableVector3 : Vector3, VariableVector2 {
 
     override fun set(component: Int, value: Double) {
         when(component) {
-            0 -> x
-            1 -> y
-            2 -> z
+            0 -> x = value
+            1 -> y = value
+            2 -> z = value
             else -> throw Exception("OutOfBoundsException: Tried to set 4th coordinate on a 3D vector")
         }
     }

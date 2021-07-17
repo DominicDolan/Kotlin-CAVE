@@ -153,6 +153,31 @@ interface MatrixArrayTransforms {
 
     }
 
+    fun DoubleArray.applySkew(matrix: Matrix4, x: Radian, y: Radian) {
+        val skewX = tan(-(x.toDouble()))
+        val skewY = tan(y.toDouble())
+
+        val m00 = matrix.row[0].dot(1.0, skewY, 0.0)
+        val m10 = matrix.row[1].dot(1.0, skewY, 0.0)
+        val m20 = matrix.row[2].dot(1.0, skewY, 0.0)
+        val m30 = matrix.row[3].dot(1.0, skewY, 0.0)
+
+        val m01 = matrix.row[0].dot(skewX, 1.0, 0.0)
+        val m11 = matrix.row[1].dot(skewX, 1.0, 0.0)
+        val m21 = matrix.row[2].dot(skewX, 1.0, 0.0)
+        val m31 = matrix.row[3].dot(skewX, 1.0, 0.0)
+
+        this[0, 0] = m00
+        this[1, 0] = m10
+        this[2, 0] = m20
+        this[3, 0] = m30
+
+        this[0, 1] = m01
+        this[1, 1] = m11
+        this[2, 1] = m21
+        this[3, 1] = m31
+    }
+
     /**
      *  @param fov: The vertical field of view angle in Radians
      *  @param aspectRatio: The aspect ratio of the view port, width/height
