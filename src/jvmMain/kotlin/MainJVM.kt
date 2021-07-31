@@ -1,12 +1,18 @@
 import com.cave.library.angle.degrees
 import com.cave.library.angle.plus
+import com.cave.library.color.Color
 import com.cave.library.matrix.mat3.Matrix3
 import com.cave.library.matrix.mat4.Matrix4
 import org.joml.Matrix4f
 
 fun main() {
-    testMultiplication()
+    println(Color.toString(Color.rgba(0.0, 1.0, 0.0, 1.0)))
+    println(toString(Color.rgba(0.0, 1.0, 0.0, 1.0)))
 
+}
+
+fun toString(color: Color): String {
+    return String.format("0x%08X", color.toLong())
 }
 
 fun testVariableRotation() {

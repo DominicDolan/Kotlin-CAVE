@@ -50,6 +50,9 @@ interface Color {
 
             override fun toLong() = rgba2Hex(r, g, b, a)
 
+            override fun toString(): String {
+                return toString(this)
+            }
         }
 
         fun create() = VariableColor.rgba(1.0, 1.0, 1.0, 1.0)
@@ -71,6 +74,10 @@ interface Color {
 
         val black = rgba(0.0, 0.0, 0.0, 1.0)
         val white = rgba(1.0, 1.0, 1.0, 1.0)
+
+        fun toString(color: Color): String {
+            return "0x" + color.toLong().toString(16).padStart(8, '0')
+        }
     }
 }
 
@@ -89,7 +96,7 @@ inline class InlineColor(private val hex: Long): Color {
     override fun toLong() = hex
 
     override fun toString(): String {
-        return hex.toString(8)//String.format("0x%08X", hex)
+        return Color.toString(this)
     }
 
     companion object {
@@ -169,6 +176,10 @@ interface VariableColor : Color {
                 override var b: Double = b
                 override var a: Double = a
 
+
+                override fun toString(): String {
+                    return Color.toString(this)
+                }
             }
         }
 
