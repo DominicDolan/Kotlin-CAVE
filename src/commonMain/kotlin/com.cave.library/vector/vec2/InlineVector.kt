@@ -72,3 +72,5 @@ fun InlineVector.dot(other: InlineVector) = this.x*other.x + this.y*other.y
 fun InlineVector.cross(other: InlineVector) = (this.x * other.y - this.y * other.x)
 
 fun InlineVector.perpendicular() = vec(this.y, -this.x)
+
+val InlineVector.rSquared get() = x*x + y*y

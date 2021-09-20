@@ -9,17 +9,24 @@ import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.VariableVector4
 import com.cave.library.vector.vec4.Vector4
 
+fun VariableVector3.add(x: Double, y: Double, z: Double) {
+    this.x += x
+    this.y += y
+    this.z += z
+}
+
+fun VariableVector3.subtract(x: Double, y: Double, z: Double) {
+    this.x -= x
+    this.y -= y
+    this.z -= z
+}
 
 operator fun VariableVector2.plusAssign(vector: Vector2) {
     this.x += vector.x
     this.y += vector.y
 }
 
-operator fun VariableVector3.plusAssign(vector: Vector3) {
-    this.x += vector.x
-    this.y += vector.y
-    this.z += vector.z
-}
+operator fun VariableVector3.plusAssign(vector: Vector3) = add(vector.x, vector.y, vector.z)
 
 operator fun VariableVector4.plusAssign(vector: Vector4) {
     this.x += vector.x
@@ -63,3 +70,16 @@ fun Vector3.dot(other: Vector3) = dot(other.x, other.y, other.z)
 
 fun Vector4.dot(x: Double, y: Double, z: Double, w: Double) = this.x*x + this.y*y + this.z*z + this.w*w
 fun Vector4.dot(other: Vector4) = dot(other.x, other.y, other.z, other.w)
+
+fun VariableVector3.crossAssign(x: Double, y: Double, z: Double) {
+    val thisX = this.x
+    val thisY = this.y
+    val thisZ = this.z
+
+    this.x = thisY*z - thisZ*y
+    this.y = thisZ*x - thisX*z
+    this.z = thisX*y - thisY*x
+}
+
+fun VariableVector3.crossAssign(other: Vector3) = crossAssign(other.x, other.y, other.z)
+
