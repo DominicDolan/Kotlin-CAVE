@@ -47,7 +47,7 @@ interface Vector2 {
     }
 }
 
-interface VariableVector2 : Vector2 {
+interface MutableVector2 : Vector2 {
     override var x: Double
     override var y: Double
 
@@ -83,7 +83,7 @@ interface VariableVector2 : Vector2 {
     }
 
     companion object {
-        fun create(x: Double, y: Double) = object : VariableVector2 {
+        fun create(x: Double, y: Double) = object : MutableVector2 {
 
             private val rCache = CachedDouble.create(arrayOf({ x }, { y })) { super.r }
             override val r: Double

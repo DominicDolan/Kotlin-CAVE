@@ -7,7 +7,7 @@ import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
 import com.cave.library.vector.vec4.Vector4
 
@@ -20,7 +20,7 @@ interface Matrix3 {
     fun fill(array: DoubleArray)
     fun fill(array: FloatArray)
 
-    val scale: VariableVector3
+    val scale: MutableVector3
     val rotation: VariableRotation
 
     fun identity(): Matrix3
@@ -36,15 +36,15 @@ interface Matrix3 {
 
     interface Column {
         operator fun get(row: Int, column: Int): Double
-        operator fun get(column: Int): ColumnVariableVector3
+        operator fun get(column: Int): ColumnMutableVector3
         operator fun set(row: Int, column: Int, value: Double)
         operator fun set(column: Int, value: Vector4)
 
         companion object {
             fun create(array: DoubleArray) = object : Column {
-                private val columns = Array(columnCount) { ColumnVariableVector3(it, array, Matrix3) }
+                private val columns = Array(columnCount) { ColumnMutableVector3(it, array, Matrix3) }
 
-                override fun get(column: Int): ColumnVariableVector3 = columns[column]
+                override fun get(column: Int): ColumnMutableVector3 = columns[column]
                 override fun get(row: Int, column: Int) = get(column)[row]
 
                 override fun set(row: Int, column: Int, value: Double) {
@@ -63,15 +63,15 @@ interface Matrix3 {
 
     interface Row {
         operator fun get(row: Int, column: Int): Double
-        operator fun get(row: Int): RowVariableVector3
+        operator fun get(row: Int): RowMutableVector3
         operator fun set(row: Int, column: Int, value: Double)
         operator fun set(row: Int, value: Vector4)
 
         companion object {
             fun create(array: DoubleArray) = object : Row {
-                private val rows = Array(columnCount) { RowVariableVector3(it, array, Matrix3) }
+                private val rows = Array(columnCount) { RowMutableVector3(it, array, Matrix3) }
 
-                override fun get(row: Int): RowVariableVector3 = rows[row]
+                override fun get(row: Int): RowMutableVector3 = rows[row]
                 override fun get(row: Int, column: Int) = get(column)[row]
 
                 override fun set(row: Int, column: Int, value: Double) {
@@ -138,11 +138,11 @@ internal class Matrix3Impl(private val array: DoubleArray, transforms: MatrixArr
         return array[row, column]
     }
 
-    override val scale: VariableVector3 by lazy {
+    override val scale: MutableVector3 by lazy {
         val xIndex = coordsToIndex(0, 0)
         val yIndex = coordsToIndex(1, 1)
         val zIndex = coordsToIndex(2, 2)
-        IndexedMatrixVariableVector3(array, xIndex, yIndex, zIndex)
+        IndexedMatrixMutableVector3(array, xIndex, yIndex, zIndex)
     }
 
     override val rotation: VariableRotation = RotationVariableImpl(array, 0.0.radians, 0.0, 0.0, 1.0, this)
@@ -196,7 +196,7 @@ internal class RotationVariableImpl(
         array.rotate(angle, x, y, z)
     }
 
-    override val axis: VariableVector3 = object : VariableVector3 {
+    override val axis: MutableVector3 = object : MutableVector3 {
 
         private val xCache = CachedDouble.create(arrayOf({ array[1, 2] }, { array[2, 1] }), defaultX) { superAxis.x }
         override var x: Double

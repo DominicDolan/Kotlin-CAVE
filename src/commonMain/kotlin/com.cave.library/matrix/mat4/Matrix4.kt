@@ -6,9 +6,9 @@ import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.tools.hypot
 import com.cave.library.vector.timesAssign
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
-import com.cave.library.vector.vec4.VariableVector4
+import com.cave.library.vector.vec4.MutableVector4
 import com.cave.library.vector.vec4.Vector4
 import kotlin.math.abs
 import kotlin.math.atan
@@ -44,13 +44,13 @@ interface Matrix4 {
     operator fun timesAssign(other: Matrix4)
 
     interface Columns {
-        operator fun get(column: Int): VariableVector4
-        operator fun set(column: Int, value: VariableVector4)
+        operator fun get(column: Int): MutableVector4
+        operator fun set(column: Int, value: MutableVector4)
     }
 
     interface Rows {
-        operator fun get(row: Int): VariableVector4
-        operator fun set(row: Int, value: VariableVector4)
+        operator fun get(row: Int): MutableVector4
+        operator fun set(row: Int, value: MutableVector4)
     }
 
     companion object : Matrix4Factory<Matrix4>() {
@@ -194,7 +194,7 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
 
         override fun apply(angle: Degree) = apply(angle.toRadians())
 
-        private val defaultAxis = object : VariableVector3 {
+        private val defaultAxis = object : MutableVector3 {
             override var x: Double = 0.0
             override var y: Double = 0.0
             override var z: Double = 1.0
@@ -209,7 +209,7 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
                 get() = abs(array[0, 1] - array[1, 0])
         }
 
-        override val axis: VariableVector3 = object : VariableVector3 {
+        override val axis: MutableVector3 = object : MutableVector3 {
             override var x: Double
                 get() = getAxisComponent(fullAxis.x, defaultAxis.x)
                 set(value) {
@@ -272,7 +272,7 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
     }
 
     override val column: Matrix4.Columns  = object : Matrix4.Columns {
-        private val columns = Array<VariableVector4>(4) { object : VariableVector4 {
+        private val columns = Array<MutableVector4>(4) { object : MutableVector4 {
             override var x: Double
                 get() = array[0, it]
                 set(value) { array[0, it] = value}
@@ -289,13 +289,13 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
         } }
 
         override fun get(column: Int) = columns[column]
-        override fun set(column: Int, value: VariableVector4) {
+        override fun set(column: Int, value: MutableVector4) {
             columns[column].set(value)
         }
     }
     
     override val row: Matrix4.Rows = object : Matrix4.Rows {
-        private val rows = Array<VariableVector4>(4) { object : VariableVector4 {
+        private val rows = Array<MutableVector4>(4) { object : MutableVector4 {
             override var x: Double
                 get() = array[it, 0]
                 set(value) { array[it, 0] = value}
@@ -315,7 +315,7 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
         } }
 
         override fun get(row: Int) = rows[row]
-        override fun set(row: Int, value: VariableVector4) {
+        override fun set(row: Int, value: MutableVector4) {
             rows[row].set(value)
         }
     }

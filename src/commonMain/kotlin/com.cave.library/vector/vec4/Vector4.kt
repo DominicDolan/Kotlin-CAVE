@@ -6,7 +6,7 @@ import com.cave.library.tools.CachedRadian
 import com.cave.library.tools.hypot
 import com.cave.library.vector.vec2.InlineVector
 import com.cave.library.vector.vec2.Vector2
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
 
 interface Vector4 : Vector3 {
@@ -70,7 +70,7 @@ interface Vector4 : Vector3 {
     }
 }
 
-interface VariableVector4 : Vector4, VariableVector3 {
+interface MutableVector4 : Vector4, MutableVector3 {
     override var w: Double
 
     fun set(x: Double, y: Double, z: Double, w: Double) {
@@ -108,7 +108,7 @@ interface VariableVector4 : Vector4, VariableVector3 {
     }
 
     companion object {
-        fun create(x: Double, y: Double, z: Double, w: Double) = object : VariableVector4 {
+        fun create(x: Double, y: Double, z: Double, w: Double) = object : MutableVector4 {
 
             private val rCache = CachedDouble.create(arrayOf({ x }, { y }, { z })) { super.r }
             override val r: Double

@@ -3,7 +3,7 @@ package com.cave.library.angle
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.mat3.MatrixVector3
 import com.cave.library.tools.hypot
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
 import kotlin.math.PI
 import kotlin.math.abs
@@ -89,7 +89,7 @@ internal abstract class AbstractRotation(private val array: DoubleArray, private
 interface VariableRotation : Rotation {
     override var angle: Radian
 
-    override val axis: VariableVector3
+    override val axis: MutableVector3
 
     fun set(angle: Radian, x: Double, y: Double, z: Double)
     fun set(angle: Degree, x: Double, y: Double, z: Double) = set(angle.toRadians(), x, y, z)

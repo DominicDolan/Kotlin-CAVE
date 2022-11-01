@@ -5,7 +5,7 @@ import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.formatted
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
 
 abstract class MatrixVector3(
@@ -78,12 +78,12 @@ open class RowVector3(row: Int, array: DoubleArray, transforms: MatrixArrayTrans
 )
 
 
-open class IndexedMatrixVariableVector3(
+open class IndexedMatrixMutableVector3(
     array: DoubleArray,
     xIndex: Int,
     yIndex: Int,
     zIndex: Int
-) : IndexedMatrixVector3(array, xIndex, yIndex, zIndex), VariableVector3 {
+) : IndexedMatrixVector3(array, xIndex, yIndex, zIndex), MutableVector3 {
 
     override var x: Double
         get() = super.x
@@ -97,8 +97,8 @@ open class IndexedMatrixVariableVector3(
 
 }
 
-class ColumnVariableVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
-    : ColumnVector3(column, array, transforms), VariableVector3 {
+class ColumnMutableVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
+    : ColumnVector3(column, array, transforms), MutableVector3 {
 
     override var x: Double
         get() = super.x
@@ -111,8 +111,8 @@ class ColumnVariableVector3(column: Int, array: DoubleArray, transforms: MatrixA
         set(value) { array[zIndex] = value }
 }
 
-class RowVariableVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
-    : RowVector3(column, array, transforms), VariableVector3 {
+class RowMutableVector3(column: Int, array: DoubleArray, transforms: MatrixArrayTransforms)
+    : RowVector3(column, array, transforms), MutableVector3 {
 
     override var x: Double
         get() = super.x

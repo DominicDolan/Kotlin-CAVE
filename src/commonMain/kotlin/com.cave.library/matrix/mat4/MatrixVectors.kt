@@ -2,13 +2,13 @@ package com.cave.library.matrix.mat4
 
 import com.cave.library.angle.*
 import com.cave.library.vector.vec2.*
-import com.cave.library.vector.vec3.VariableVector3
+import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
-import com.cave.library.vector.vec4.VariableVector4
+import com.cave.library.vector.vec4.MutableVector4
 import com.cave.library.vector.vec4.Vector4
 
 
-interface MatrixVector2: VariableVector2 {
+interface MatrixVector2: MutableVector2 {
     val defaultApply: Vector2
 
     fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y): Matrix4
@@ -19,7 +19,7 @@ interface MatrixVector2: VariableVector2 {
 
 }
 
-interface MatrixVector3: VariableVector3 {
+interface MatrixVector3: MutableVector3 {
     val defaultApply: Vector3
 
     fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y, z: Double = defaultApply.z): Matrix4
@@ -28,7 +28,7 @@ interface MatrixVector3: VariableVector3 {
 
 }
 
-interface MatrixVector4: VariableVector4 {
+interface MatrixVector4: MutableVector4 {
     val defaultApply: Vector4
 
     fun apply(x: Double = defaultApply.x, y: Double = defaultApply.y, z: Double = defaultApply.z, w: Double = defaultApply.w): Matrix4
