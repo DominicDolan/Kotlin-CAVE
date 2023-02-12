@@ -5,7 +5,9 @@ import com.cave.library.angle.radians
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
 import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.hypot
+import kotlin.math.sin
 
 interface Vector2 {
     val dimension: Int
@@ -58,6 +60,7 @@ interface MutableVector2 : Vector2 {
 
     fun set(vector: Vector2) = set(vector.x, vector.y)
     fun set(vector: InlineVector) = set(vector.x, vector.y)
+    fun set(r: Number, theta: Radian) = set(r.toDouble()*cos(theta.toDouble()), r.toDouble()*sin(theta.toDouble()))
 
     operator fun set(component: Int, value: Double) {
         when(component) {
