@@ -32,6 +32,7 @@ interface Vector2 {
     operator fun component2() = y
 
     companion object {
+        val origin = create()
         fun create(x: Double, y: Double) = object : Vector2 {
             override val r: Double = super.r
 

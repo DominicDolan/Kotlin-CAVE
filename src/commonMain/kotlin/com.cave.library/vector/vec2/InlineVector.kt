@@ -28,6 +28,7 @@ inline class InlineVector(private val xy: Long): Vector2 {
 }
 
 fun vec(x: Number, y: Number) = InlineVector.create(x.toFloat(), y.toFloat())
+fun vec() = InlineVector.create(0.0f, 0.0f)
 
 fun vec(r: Number, theta: Degree): InlineVector {
     val x = r.toDouble()* cos(theta.toRadians().toDouble())
