@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.4.21"
+    kotlin("multiplatform") version "1.9.0"
 }
 
 group = "com.cave.library"
@@ -8,14 +8,19 @@ version = "0.1"
 repositories {
     mavenCentral()
 }
+dependencies {
+    commonTestImplementation(kotlin("test"))
+}
 
 kotlin {
-    jvm()
+    jvm {
+        jvmToolchain(8)
+        withJava()
+    }
     mingwX64 {
         binaries {
             executable()
         }
-
     }
     js(IR) {
         browser()
@@ -39,11 +44,6 @@ kotlin {
 
         }
         val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
-        val commonTest by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
             }
