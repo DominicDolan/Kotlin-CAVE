@@ -1,6 +1,6 @@
 package com.cave.library.vector.vec2
 
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.angle.radians
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
@@ -61,7 +61,7 @@ interface MutableVector2 : Vector2 {
 
     fun set(vector: Vector2) = set(vector.x, vector.y)
     fun set(vector: InlineVector) = set(vector.x, vector.y)
-    fun set(r: Number, theta: Radian) = set(r.toDouble()*cos(theta.toDouble()), r.toDouble()*sin(theta.toDouble()))
+    fun set(r: Number, theta: Angle) = set(r.toDouble()*cos(theta.toRadians()), r.toDouble()*sin(theta.toRadians()))
 
     operator fun set(component: Int, value: Double) {
         when(component) {
@@ -94,7 +94,7 @@ interface MutableVector2 : Vector2 {
                 get() = rCache.get()
 
             private val thetaCache = CachedRadian.create(arrayOf({ x }, { y })) { super.theta }
-            override val theta: Radian
+            override val theta: Angle
                 get() = thetaCache.get()
 
             override var x: Double = x

@@ -2,8 +2,7 @@
 
 package com.cave.library.matrix
 
-import com.cave.library.angle.Degree
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.angle.Rotation
 import com.cave.library.angle.radians
 import com.cave.library.matrix.mat3.Matrix3
@@ -20,7 +19,7 @@ interface MatrixArrayTransforms {
     val arraySize: Int
         get() = columnCount*rowCount
 
-    val DoubleArray.angle: Radian
+    val DoubleArray.angle: Angle
         get() {
             val trace = this[0, 0] + this[1, 1] + this[2, 2]
             val angle = safeAcos((trace - 1.0) / 2.0)
@@ -86,15 +85,11 @@ interface MatrixArrayTransforms {
         this[coordsToIndex(2, 2)] *= z
     }
 
-    fun DoubleArray.rotate(angle: Radian, x: Double, y: Double, z: Double) {
-        this.rotate(angle.toDouble(), x, y, z)
+    fun DoubleArray.rotate(angle: Angle, x: Double, y: Double, z: Double) {
+        this.rotate(angle.toRadians(), x, y, z)
     }
 
-    fun DoubleArray.rotate(angle: Degree, x: Double, y: Double, z: Double) {
-        this.rotate(angle.toRadians().toDouble(), x, y, z)
-    }
-
-    fun DoubleArray.rotate(angle: Degree, vector: Vector3) {
+    fun DoubleArray.rotate(angle: Angle, vector: Vector3) {
         this.rotate(angle.toRadians().toDouble(), vector.x, vector.y, vector.z)
     }
 
@@ -102,9 +97,9 @@ interface MatrixArrayTransforms {
         this.rotate(rotation.angle, rotation.axis.x, rotation.axis.y, rotation.axis.z)
     }
     
-    fun DoubleArray.applyRotation(angle: Radian, x: Double, y: Double, z: Double) {
-        val sin = sin(angle.toDouble())
-        val cos = cos(angle.toDouble())
+    fun DoubleArray.applyRotation(angle: Angle, x: Double, y: Double, z: Double) {
+        val sin = sin(angle.toRadians())
+        val cos = cos(angle.toRadians())
 
         val versin = 1.0 - cos
 
@@ -153,9 +148,9 @@ interface MatrixArrayTransforms {
 
     }
 
-    fun DoubleArray.applySkew(matrix: Matrix4, x: Radian, y: Radian) {
-        val skewX = tan(-(x.toDouble()))
-        val skewY = tan(y.toDouble())
+    fun DoubleArray.applySkew(matrix: Matrix4, x: Angle, y: Angle) {
+        val skewX = tan(-(x.toRadians()))
+        val skewY = tan(y.toRadians())
 
         val m00 = matrix.row[0].dot(1.0, skewY, 0.0)
         val m10 = matrix.row[1].dot(1.0, skewY, 0.0)
@@ -184,9 +179,9 @@ interface MatrixArrayTransforms {
      *  @param near: The distance to the near plane
      *  @param far: the distance to the far plane, accepts infinity as a value
      */
-    fun DoubleArray.perspective(fov: Radian, aspectRatio: Double, near: Double, far: Double) {
+    fun DoubleArray.perspective(fov: Angle, aspectRatio: Double, near: Double, far: Double) {
         val errorCorrection = 1E-7
-        val m11 = 1.0/ tan(fov.toDouble()/2.0)
+        val m11 = 1.0/ tan(fov.toRadians()/2.0)
         val isInfinite = far > 0.0 && far.isInfinite()
 
         val m22 = if (isInfinite) errorCorrection - 1.0 else -(far + near)/(far - near)

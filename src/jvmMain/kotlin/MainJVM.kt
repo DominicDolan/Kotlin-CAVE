@@ -20,11 +20,11 @@ fun testVariableRotation() {
     var inputAngle = 0.degrees
     val m = Matrix3.identity()
 
-    while (inputAngle.toDouble() < 180.0) {
-        m.rotation.angle = inputAngle.toRadians()
+    while (inputAngle.toDegrees() < 180.0) {
+        m.rotation.angle = inputAngle
 
         println("input angle:    $inputAngle")
-        println("rotation angle: ${m.rotation.toDegrees()}")
+        println("rotation angle: ${m.rotation.angle.toDegrees()}")
         println()
         inputAngle += 5.degrees
         Thread.sleep(500)
@@ -36,11 +36,11 @@ fun testStaticRotation() {
 
     var inputAngle = 0.degrees
 
-    while (inputAngle.toDouble() < 180.0) {
+    while (inputAngle.toDegrees() < 180.0) {
         val sr = Matrix3.rotated(inputAngle, 0.0, 0.0, 1.0)
 
         println("input angle:    $inputAngle")
-        println("rotation angle: ${sr.rotation.toDegrees()}")
+        println("rotation angle: ${sr.rotation.angle.toDegrees()}")
         println()
         inputAngle += 5.degrees
         Thread.sleep(500)

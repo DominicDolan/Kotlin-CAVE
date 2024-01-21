@@ -30,7 +30,7 @@ abstract class Matrix4Factory<M> : Matrix3Factory<M>() {
      */
     fun perspective(fov: Angle, aspectRatio: Double, near: Double = 0.0, far: Double = Double.POSITIVE_INFINITY): M {
         val array = DoubleArray(arraySize)
-        array.perspective(fov.toRadians(), aspectRatio, near, far)
+        array.perspective(fov, aspectRatio, near, far)
         return create(array)
     }
 

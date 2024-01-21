@@ -1,7 +1,6 @@
 package com.cave.library.vector.vec2
 
-import com.cave.library.angle.Degree
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -30,15 +29,9 @@ inline class InlineVector(private val xy: Long): Vector2 {
 fun vec(x: Number, y: Number) = InlineVector.create(x.toFloat(), y.toFloat())
 fun vec() = InlineVector.create(0.0f, 0.0f)
 
-fun vec(r: Number, theta: Degree): InlineVector {
-    val x = r.toDouble()* cos(theta.toRadians().toDouble())
-    val y = r.toDouble()* sin(theta.toRadians().toDouble())
-    return vec(x, y)
-}
-
-fun vec(r: Number, theta: Radian): InlineVector {
-    val x = r.toDouble()* cos(theta.toDouble())
-    val y = r.toDouble()* sin(theta.toDouble())
+fun vec(r: Number, theta: Angle): InlineVector {
+    val x = r.toDouble()* cos(theta.toRadians())
+    val y = r.toDouble()* sin(theta.toRadians())
     return vec(x, y)
 }
 

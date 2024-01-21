@@ -1,6 +1,8 @@
 package com.cave.library.matrix.mat4
 
-import com.cave.library.angle.*
+import com.cave.library.angle.Angle
+import com.cave.library.angle.VariableRotation
+import com.cave.library.angle.radians
 import com.cave.library.vector.vec2.*
 import com.cave.library.vector.vec3.MutableVector3
 import com.cave.library.vector.vec3.Vector3
@@ -37,16 +39,13 @@ interface MatrixVector4: MutableVector4 {
 }
 
 interface MatrixRotationVector : VariableRotation {
-    fun apply(angle: Radian, x: Double, y: Double, z: Double): Matrix4
-    fun apply(angle: Degree, x: Double, y: Double, z: Double): Matrix4
-    fun apply(angle: Radian): Matrix4
-    fun apply(angle: Degree): Matrix4
+    fun apply(angle: Angle, x: Double, y: Double, z: Double): Matrix4
+    fun apply(angle: Angle): Matrix4
 }
 
 
 interface MatrixAngleVector2: VariableAngleVector2 {
-    fun apply(x: Radian = 0.0.radians, y: Radian = 0.0.radians): Matrix4
-    fun apply(x: Degree = 0.0.degrees, y: Degree = 0.0.degrees) = apply(x.toRadians(), y.toRadians())
+    fun apply(x: Angle = 0.0.radians, y: Angle = 0.0.radians): Matrix4
 
     fun apply(vector: AngleVector2) = apply(vector.x, vector.y)
 

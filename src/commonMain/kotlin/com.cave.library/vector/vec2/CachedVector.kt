@@ -1,6 +1,6 @@
 package com.cave.library.vector.vec2
 
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
 import com.cave.library.vector.vec3.Vector3
@@ -31,7 +31,7 @@ abstract class CachedVector2(private val vector: Vector2) : Vector2 {
         get() = rCache.get()
 
     private val thetaCache = CachedRadian.create(arrayOf({ x }, { y })) { super.theta }
-    override val theta: Radian
+    override val theta: Angle
         get() = thetaCache.get()
 
     private var _x = 0.0
@@ -62,7 +62,7 @@ abstract class CachedVector3(private val vector: Vector3) : CachedVector2(vector
         get() = rCache.get()
 
     private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { vector.theta }
-    override val theta: Radian
+    override val theta: Angle
         get() = thetaCache.get()
 
 
@@ -84,7 +84,7 @@ abstract class CachedVector4(private val vector: Vector4) : CachedVector3(vector
         get() = rCache.get()
 
     private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { vector.theta }
-    override val theta: Radian
+    override val theta: Angle
         get() = thetaCache.get()
 
     private var _w = 0.0

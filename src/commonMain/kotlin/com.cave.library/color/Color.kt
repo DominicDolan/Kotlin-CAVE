@@ -1,7 +1,6 @@
 package com.cave.library.color
 
-import com.cave.library.angle.Degree
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.vector.vec4.Vector4
 import kotlin.math.max
 import kotlin.math.min
@@ -12,7 +11,7 @@ interface Color {
     val g: Double
     val b: Double
 
-    val hue: Degree
+    val hue: Angle
         get() = rgb2Hue(r, g, b)
     val saturation: Double
         get() = rgb2Saturation(r, g, b)
@@ -63,7 +62,7 @@ interface Color {
             return from(InlineColor(hex))
         }
 
-        fun hsl(hue: Degree, saturation: Double, lightness: Double, alpha: Double = 1.0): Color {
+        fun hsl(hue: Angle, saturation: Double, lightness: Double, alpha: Double = 1.0): Color {
             return from(InlineColor.hsl(hue, saturation, lightness, alpha))
         }
 
@@ -90,7 +89,7 @@ inline class InlineColor(private val hex: Long): Color {
         get() = hex2Green(hex)
     override val b: Double
         get() = hex2Blue(hex)
-    override val hue: Degree
+    override val hue: Angle
         get() = hex2Hue(hex)
 
     override fun toLong() = hex
@@ -123,13 +122,10 @@ inline class InlineColor(private val hex: Long): Color {
             return rgba(f(0, h, s, l), f(8, h, s, l), f(4, h, s, l), alpha)
         }
 
-        fun hsl(hue: Radian, saturation: Double, lightness: Double, alpha: Double = 1.0): InlineColor {
-            return hsl(hue.toDegrees().toDouble(), saturation, lightness, alpha)
+        fun hsl(hue: Angle, saturation: Double, lightness: Double, alpha: Double = 1.0): InlineColor {
+            return hsl(hue.toDegrees(), saturation, lightness, alpha)
         }
 
-        fun hsl(hue: Degree, saturation: Double, lightness: Double, alpha: Double = 1.0): InlineColor {
-            return hsl(hue.toDouble(), saturation, lightness, alpha)
-        }
 
 
     }
@@ -189,7 +185,7 @@ interface VariableColor : Color {
         fun from(color: InlineColor) = rgba(color.r, color.g, color.b, color.a)
 
         fun hex(hex: Long): VariableColor = from(InlineColor(hex))
-        fun hsl(hue: Degree, saturation: Double, lightness: Double, alpha: Double = 1.0): VariableColor
+        fun hsl(hue: Angle, saturation: Double, lightness: Double, alpha: Double = 1.0): VariableColor
                 = from(InlineColor.hsl(hue, saturation, lightness, alpha))
     }
 }

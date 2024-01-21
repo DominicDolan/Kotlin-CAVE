@@ -1,6 +1,6 @@
 package com.cave.library.vector.vec4
 
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.tools.CachedDouble
 import com.cave.library.tools.CachedRadian
 import com.cave.library.tools.hypot
@@ -17,7 +17,7 @@ interface Vector4 : Vector3 {
 
     override val r: Double
         get() = hypot(x, y, z, w)
-    override val theta: Radian
+    override val theta: Angle
         get() = super.theta
 
     override fun get(i: Int): Double {
@@ -115,7 +115,7 @@ interface MutableVector4 : Vector4, MutableVector3 {
                 get() = rCache.get()
 
             private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super.theta }
-            override val theta: Radian
+            override val theta: Angle
                 get() = thetaCache.get()
 
             override var x: Double = x

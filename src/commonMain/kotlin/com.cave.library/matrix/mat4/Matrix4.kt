@@ -1,7 +1,6 @@
 package com.cave.library.matrix.mat4
 
-import com.cave.library.angle.Degree
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.tools.hypot
@@ -33,9 +32,7 @@ interface Matrix4 {
     fun transpose(): Matrix4
     fun zero(): Matrix4
 
-    fun perspective(fov: Degree, aspectRatio: Double, near: Double = 0.0, far: Double = Double.POSITIVE_INFINITY): Matrix4
-    fun perspective(fov: Radian, aspectRatio: Double, near: Double = 0.0, far: Double = Double.POSITIVE_INFINITY): Matrix4
-
+    fun perspective(fov: Angle, aspectRatio: Double, near: Double = 0.0, far: Double = Double.POSITIVE_INFINITY): Matrix4
     operator fun set(row: Int, column: Int, value: Double)
     operator fun get(row: Int, column: Int): Double
 
@@ -95,12 +92,7 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
         return this
     }
 
-    override fun perspective(fov: Degree, aspectRatio: Double, near: Double, far: Double): Matrix4 {
-        array.perspective(fov.toRadians(), aspectRatio, near, far)
-        return this
-    }
-
-    override fun perspective(fov: Radian, aspectRatio: Double, near: Double, far: Double): Matrix4 {
+    override fun perspective(fov: Angle, aspectRatio: Double, near: Double, far: Double): Matrix4 {
         array.perspective(fov, aspectRatio, near, far)
         return this
     }
@@ -172,27 +164,23 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
 
     override val rotation: MatrixRotationVector = object : MatrixRotationVector {
 
-        override var angle: Radian
+        override var angle: Angle
             get() = array.angle
             set(value) {
                 array.rotate(value, axis.x, axis.y, axis.z)
             }
 
-        override fun set(angle: Radian, x: Double, y: Double, z: Double) {
+        override fun set(angle: Angle, x: Double, y: Double, z: Double) {
             array.rotate(angle, x, y, z)
         }
 
         // TODO: Theses apply functions could be made more efficient
-        override fun apply(angle: Radian, x: Double, y: Double, z: Double): Matrix4 {
-            array.applyRotation(angle.toRadians(), x, y, z)
+        override fun apply(angle: Angle, x: Double, y: Double, z: Double): Matrix4 {
+            array.applyRotation(angle, x, y, z)
             return this@Matrix4Impl
         }
 
-        override fun apply(angle: Degree, x: Double, y: Double, z: Double) = apply(angle.toRadians(), x, y, z)
-
-        override fun apply(angle: Radian) = apply(angle, axis.x, axis.y, axis.z)
-
-        override fun apply(angle: Degree) = apply(angle.toRadians())
+        override fun apply(angle: Angle) = apply(angle, axis.x, axis.y, axis.z)
 
         private val defaultAxis = object : MutableVector3 {
             override var x: Double = 0.0
@@ -253,20 +241,20 @@ private class Matrix4Impl(val array: DoubleArray) : Matrix4, MatrixArrayTransfor
     }
 
     override val skew: MatrixAngleVector2 = object : MatrixAngleVector2 {
-        override fun apply(x: Radian, y: Radian): Matrix4 {
+        override fun apply(x: Angle, y: Angle): Matrix4 {
             array.applySkew(this@Matrix4Impl, x, y)
             return this@Matrix4Impl
         }
 
-        override var x: Radian
+        override var x: Angle
             get() = (-atan(array[0, 1])).radians
             set(value) {
-                array[0, 1] = tan(-(value.toDouble()))
+                array[0, 1] = tan(-(value.toRadians()))
             }
-        override var y: Radian
+        override var y: Angle
             get() = atan(array[1, 0]).radians
             set(value) {
-                array[1, 0] = tan(value.toDouble())
+                array[1, 0] = tan(value.toRadians())
             }
 
     }

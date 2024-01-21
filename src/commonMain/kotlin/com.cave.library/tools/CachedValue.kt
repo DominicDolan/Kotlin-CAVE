@@ -1,6 +1,6 @@
 package com.cave.library.tools
 
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.angle.radians
 
 interface CachedDouble {
@@ -45,13 +45,13 @@ private class CachedDoubleImpl(
 }
 
 interface CachedRadian {
-    fun get(): Radian
+    fun get(): Angle
 
     companion object {
         fun create(
             dependents: Array<() -> Double>,
-            default: Radian = 0.0.radians,
-            calculate: () -> Radian,
+            default: Angle = 0.0.radians,
+            calculate: () -> Angle,
         ): CachedRadian {
             return CachedRadianImpl(dependents, default, calculate)
         }
@@ -60,18 +60,18 @@ interface CachedRadian {
 
 private class CachedRadianImpl(
     dependents: Array<() -> Double>,
-    default: Radian = 0.0.radians,
-    private val calculate: () -> Radian,
+    default: Angle = 0.0.radians,
+    private val calculate: () -> Angle,
 ) : CachedRadian {
 
-    private var value: Radian = default
+    private var value: Angle = default
 
     private val dependents = Dependents(dependents)
 
-    override fun get(): Radian {
+    override fun get(): Angle {
         if (dependents.haveChanged()) {
             val value = calculate()
-            if (value.toDouble().isFinite()) {
+            if (value.toRadians().isFinite()) {
                 this.value = value
             }
         }

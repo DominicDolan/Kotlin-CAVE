@@ -1,7 +1,7 @@
 package com.cave.library.matrix.mat3
 
 import com.cave.library.angle.AbstractRotation
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.angle.VariableRotation
 import com.cave.library.angle.radians
 import com.cave.library.matrix.MatrixArrayTransforms
@@ -168,7 +168,7 @@ internal class Matrix3Impl(private val array: DoubleArray, transforms: MatrixArr
 
 internal class RotationVariableImpl(
     private val array: DoubleArray,
-    private val defaultRotation: Radian,
+    private val defaultRotation: Angle,
     defaultX: Double, defaultY: Double, defaultZ: Double,
     transforms: MatrixArrayTransforms,
 ) : AbstractRotation(array, transforms), VariableRotation {
@@ -176,10 +176,10 @@ internal class RotationVariableImpl(
     private val angleCache = CachedRadian.create(arrayOf({ array[0, 0] }, { array[1, 1] }, { array[2, 2] })) {
         super.angle
     }
-    override var angle: Radian
+    override var angle: Angle
         get() {
             val calculated = angleCache.get()
-            return if (calculated.toDouble().isFinite()) {
+            return if (calculated.toRadians().isFinite()) {
                 calculated
             } else {
                 defaultRotation
@@ -192,7 +192,7 @@ internal class RotationVariableImpl(
     private val superAxis: Vector3
         get() = super.axis
 
-    override fun set(angle: Radian, x: Double, y: Double, z: Double) {
+    override fun set(angle: Angle, x: Double, y: Double, z: Double) {
         array.rotate(angle, x, y, z)
     }
 

@@ -9,17 +9,9 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.acos
 
-interface Rotation : Angle {
-    val angle: Radian
+interface Rotation {
+    val angle: Angle
     val axis: Vector3
-
-    override fun toDouble() = angle.toDouble()
-
-    override fun toFloat() = angle.toFloat()
-
-    override fun toDegrees() = angle.toDegrees()
-
-    override fun toRadians() = angle
 
     companion object {
         fun create(rotation: Angle, x: Double, y: Double, z: Double): Rotation {
@@ -31,7 +23,7 @@ interface Rotation : Angle {
             val adjustedZ = if (isUnit) z else z/r
 
             return object : Rotation {
-                override val angle: Radian = rotation.toRadians()
+                override val angle: Angle = rotation
                 override val axis: Vector3 = Vector3.create(adjustedX, adjustedY, adjustedZ)
 
                 override fun toString(): String = Companion.toString(this)
@@ -49,7 +41,7 @@ interface Rotation : Angle {
 
 internal abstract class AbstractRotation(private val array: DoubleArray, private val transforms: MatrixArrayTransforms) : Rotation, MatrixArrayTransforms by transforms {
 
-    override val angle: Radian
+    override val angle: Angle
         get() {
 
             val trace = array[0, 0] + array[1, 1] + array[2, 2]
@@ -87,10 +79,9 @@ internal abstract class AbstractRotation(private val array: DoubleArray, private
 
 
 interface VariableRotation : Rotation {
-    override var angle: Radian
+    override var angle: Angle
 
     override val axis: MutableVector3
 
-    fun set(angle: Radian, x: Double, y: Double, z: Double)
-    fun set(angle: Degree, x: Double, y: Double, z: Double) = set(angle.toRadians(), x, y, z)
+    fun set(angle: Angle, x: Double, y: Double, z: Double)
 }

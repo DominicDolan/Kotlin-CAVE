@@ -1,6 +1,6 @@
 package com.cave.library.matrix.mat3
 
-import com.cave.library.angle.Radian
+import com.cave.library.angle.Angle
 import com.cave.library.matrix.MatrixArrayTransforms
 import com.cave.library.matrix.formatted
 import com.cave.library.tools.CachedDouble
@@ -23,7 +23,7 @@ abstract class MatrixVector3(
         }
 
     private val thetaCache = CachedRadian.create(arrayOf({ x }, { y }, { z })) { super.theta }
-    override val theta: Radian
+    override val theta: Angle
         get() = thetaCache.get()
 
     override val x: Double
