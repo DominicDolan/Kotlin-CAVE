@@ -1,6 +1,8 @@
 package com.cave.library.angle
 
 import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.sign
 
 inline val Number.degrees: Angle
     get() = Angle.fromDegrees(this.toDouble())
@@ -26,7 +28,9 @@ operator fun Angle.times(other: Number): Angle {
 
 fun minimumDifference(angle1: Angle, angle2: Angle): Angle {
     val diff = angle2 - angle1
-    return ((diff.toRadians() + PI) % (2.0* PI) - PI).radians
+    val radians = diff.toRadians()
+
+    return (sign(radians)*((abs(radians) + PI) % (2.0* PI) - PI)).radians
 }
 
 inline fun degreesToRadians(degrees: Double): Double {
