@@ -4,6 +4,8 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.sign
 
+const val TAU = 2* PI
+
 inline val Number.degrees: Angle
     get() = Angle.fromDegrees(this.toDouble())
 
@@ -26,11 +28,29 @@ operator fun Angle.times(other: Number): Angle {
     return (this.toRadians() * other.toDouble()).radians
 }
 
+fun Angle.normalized(): Angle {
+    val radians = this.toRadians() % TAU
+    if (radians < 0) {
+        return (TAU + radians).radians
+    }
+    return radians.radians
+}
+
 fun minimumDifference(angle1: Angle, angle2: Angle): Angle {
     val diff = angle2 - angle1
     val radians = diff.toRadians()
 
-    return (sign(radians)*((abs(radians) + PI) % (2.0* PI) - PI)).radians
+    return (sign(radians)*((abs(radians) + PI) % (TAU) - PI)).radians
+}
+
+fun maximumDifference(angle1: Angle, angle2: Angle): Angle {
+    val diff = angle2.normalized().toRadians() - angle1.normalized().toRadians()
+
+    return if (diff > PI || diff <= -PI) {
+        diff.radians
+    } else {
+        (sign(diff)*-TAU + diff).radians
+    }
 }
 
 inline fun degreesToRadians(degrees: Double): Double {
@@ -39,4 +59,8 @@ inline fun degreesToRadians(degrees: Double): Double {
 
 inline fun radiansToDegrees(radians: Double): Double {
     return (radians*180.0/ PI)
+}
+
+fun Angle.isBetween(angle1: Angle, angle2: Angle): Boolean {
+    return abs(minimumDifference(angle1, this).toRadians()) < abs(minimumDifference(angle1, angle2).toRadians())
 }
