@@ -62,5 +62,8 @@ inline fun radiansToDegrees(radians: Double): Double {
 }
 
 fun Angle.isBetween(angle1: Angle, angle2: Angle): Boolean {
-    return abs(minimumDifference(angle1, this).toRadians()) < abs(minimumDifference(angle1, angle2).toRadians())
+    val a1ToThis = minimumDifference(angle1, this).toRadians()
+    val a1ToA2 = minimumDifference(angle1, angle2).toRadians()
+
+    return sign(a1ToThis) == sign(a1ToA2) && abs(a1ToThis) < abs(a1ToA2)
 }

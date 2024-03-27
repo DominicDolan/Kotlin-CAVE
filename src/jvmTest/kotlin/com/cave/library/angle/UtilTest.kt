@@ -97,6 +97,16 @@ class UtilTest {
     }
 
     @Test
+    fun `minimumDifference Returns The Difference -161 for for 91 to -70`() {
+        val angle1 = 91.degrees
+        val angle2 = (-70).degrees
+
+        val diff = minimumDifference(angle1, angle2)
+
+        assertEquals(-161.0, diff.toDegrees(), 0.001)
+    }
+
+    @Test
     fun `maximumDifference Returns The Difference for acute angles`() {
         val angle1 = 30.degrees
         val angle2 = 60.degrees
@@ -231,6 +241,16 @@ class UtilTest {
         val isBetween = (-45).degrees.isBetween(angle1, angle2)
 
         assert(isBetween)
+    }
+
+    @Test
+    fun `isBetween returns false for 110 being between 70 and 91 degrees`() {
+        val angle1 = (-90).degrees
+        val angle2 = (75).degrees
+
+        val isBetween = (180).degrees.isBetween(angle1, angle2)
+
+        assertFalse(isBetween)
     }
 
 }
