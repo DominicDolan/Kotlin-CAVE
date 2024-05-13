@@ -1,10 +1,12 @@
 package com.cave.library.vector.vec2
 
 import com.cave.library.angle.Angle
+import kotlin.jvm.JvmInline
 import kotlin.math.cos
 import kotlin.math.sin
 
-inline class InlineVector(private val xy: Long): Vector2 {
+@JvmInline
+value class InlineVector(private val xy: Long): Vector2 {
     override val x get() = Float.fromBits((xy shr 32).toInt()).toDouble()
     override val y get() = Float.fromBits(xy.toInt()).toDouble()
 

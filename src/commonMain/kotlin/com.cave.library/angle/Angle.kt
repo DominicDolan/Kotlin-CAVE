@@ -1,6 +1,9 @@
 package com.cave.library.angle
 
-inline class Angle(private val radians: Double) {
+import kotlin.jvm.JvmInline
+
+@JvmInline
+value class Angle(private val radians: Double) {
     fun toDegrees(): Double {
         return radiansToDegrees(radians)
     }

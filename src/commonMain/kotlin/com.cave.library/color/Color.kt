@@ -2,6 +2,7 @@ package com.cave.library.color
 
 import com.cave.library.angle.Angle
 import com.cave.library.vector.vec4.Vector4
+import kotlin.jvm.JvmInline
 import kotlin.math.max
 import kotlin.math.min
 
@@ -80,7 +81,8 @@ interface Color {
     }
 }
 
-inline class InlineColor(private val hex: Long): Color {
+@JvmInline
+value class InlineColor(private val hex: Long): Color {
     override val a: Double
         get() = hex2Alpha(hex)
     override val r: Double
