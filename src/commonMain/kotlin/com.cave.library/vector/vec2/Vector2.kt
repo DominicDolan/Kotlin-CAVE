@@ -89,11 +89,11 @@ interface MutableVector2 : Vector2 {
     companion object {
         fun create(x: Double, y: Double) = object : MutableVector2 {
 
-            private val rCache = CachedDouble.create(arrayOf({ x }, { y })) { super.r }
+            private val rCache = CachedDouble.create(arrayOf({ this.x }, { this.y })) { super.r }
             override val r: Double
                 get() = rCache.get()
 
-            private val thetaCache = CachedRadian.create(arrayOf({ x }, { y })) { super.theta }
+            private val thetaCache = CachedRadian.create(arrayOf({ this.x }, { this.y })) { super.theta }
             override val theta: Angle
                 get() = thetaCache.get()
 
