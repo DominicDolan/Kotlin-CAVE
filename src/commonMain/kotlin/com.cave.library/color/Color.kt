@@ -55,7 +55,7 @@ interface Color {
             }
         }
 
-        fun create() = VariableColor.rgba(1.0, 1.0, 1.0, 1.0)
+        fun create(): Color = VariableColor.rgba(1.0, 1.0, 1.0, 1.0)
 
         fun from(color: Color) = rgba(color.r, color.g, color.b, color.a)
 

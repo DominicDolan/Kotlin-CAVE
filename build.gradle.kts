@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.9.0"
+    kotlin("multiplatform") version "2.0.0-RC3"
 }
 
 group = "com.cave.library"
@@ -13,8 +13,10 @@ dependencies {
 }
 
 kotlin {
+
+    jvmToolchain(22)
+
     jvm {
-        jvmToolchain(8)
         withJava()
     }
     mingwX64 {
@@ -52,4 +54,9 @@ kotlin {
             languageSettings.enableLanguageFeature("InlineClasses")
         }
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_22
+    targetCompatibility = JavaVersion.VERSION_22
 }
