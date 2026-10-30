@@ -1,9 +1,9 @@
 plugins {
-    kotlin("multiplatform") version "2.0.0-RC3"
+    kotlin("multiplatform") version "2.2.0"
 }
 
 group = "com.cave.library"
-version = "0.1"
+version = "0.2"
 
 repositories {
     mavenCentral()
@@ -16,9 +16,10 @@ kotlin {
 
     jvmToolchain(22)
 
-    jvm {
-        withJava()
-    }
+    jvm()
+    // Linux library target for consumers such as Mechanica.
+    linuxX64()
+
     mingwX64 {
         binaries {
             executable()
@@ -56,7 +57,3 @@ kotlin {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_22
-    targetCompatibility = JavaVersion.VERSION_22
-}
